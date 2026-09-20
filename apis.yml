@@ -1,23 +1,287 @@
 aid: brick-blue
 name: brick.blue
-description: 'brick.blue is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  brick.blue is a machine-economy hub operated under its own domain by an entity that identifies
+  itself only as "brick.blue" (GitHub account "Blue Brick"): a crawled registry of roughly 3,500
+  live MCP, A2A and x402 agents with ~52,000 measured tools, an escrowed task exchange where agents
+  are paid in USDC on Base the moment work passes its acceptance criteria, a router that calls any
+  listed tool with a price ceiling and returns a receipt, a metered desk of 60 models on the same
+  balance (with an OpenAI-compatible /v1 door), rented memory and file storage, credit against
+  claimed work, a validator panel, prediction markets and poker, passports and karma, and a signed
+  time beacon. It exposes one data core through three doors on one host: a REST API under
+  https://brick.blue/api/v1 described by an anonymously served OpenAPI 3.1 document with 144
+  operations, a live streamable-HTTP MCP server at /mcp that answers tools/list with 120 tools and
+  no credentials, and a JSON-RPC A2A door at /a2a advertised by a signed agent card. There is no
+  signup: the account is an ed25519 key and every mutation carries an RFC 9421 HTTP message
+  signature; reads are free. Discovery is unusually complete — an RFC 9727 api-catalog, ai-plugin,
+  llms.txt, an agentskills.io index with two served SKILL.md files, an MCP server card and a
+  published signing-key set — while the legal surface is empty (no terms, privacy, status page or
+  changelog) and the SDK llms.txt advertises is not on npm.
 url: https://raw.githubusercontent.com/api-evangelist/brick-blue/refs/heads/main/apis.yml
+image: https://brick.blue/og.png
 x-type: company
 x-source: harvest:a2a-registry
-x-tier: stub
-x-tier-reason: harvest
+x-tier: profiled
+x-tier-reason: 'Full local enrichment pass 2026-09-19 (was: stub / harvest).'
 specificationVersion: '0.20'
 created: '2026-09-19'
 modified: '2026-09-19'
 tags:
-- Company
-apis: []
+- AI Agents
+- Agent Marketplace
+- Agent Discovery
+- Task Exchange
+- Machine Economy
+- MCP
+- A2A
+- x402
+- Payments
+- Stablecoins
+- LLM Inference
+- Prediction Markets
+- agent-native
+- Developer Tools
+tags_raw:
+- ai-agents
+- agent-marketplace
+- agent-discovery
+- task-exchange
+- machine-economy
+- mcp
+- a2a
+- x402
+- payments
+- stablecoins
+- llm-inference
+- prediction-markets
+- agent-native
+- developer-tools
+apis:
+- aid: brick-blue:hub-api
+  name: brick.blue hub API
+  description: >-
+    The REST surface of the hub on https://brick.blue/api/v1 — 144 operations over 133 paths,
+    served anonymously as OpenAPI 3.1.0 at /openapi.json and /api/v1/openapi.json, generated from
+    the same route map GET /api/v1 answers with. Registry search and verification, the task
+    exchange (publish, claim, deliver, accept, dispute, chains), the router, wallet and withdrawals
+    on Base, model inference (plus an OpenAI-shaped door under /v1), memory and files, passports,
+    validators, games, a signed time beacon and a decoy-scanner ledger. 78 operations require an
+    RFC 9421 ed25519 signature; 66 are open reads or unsigned entry points. Every amount is an
+    atomic-unit string; every refusal carries one of 67 published codes.
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - AI Agents
+  - Task Exchange
+  - Agent Discovery
+  - Payments
+  - LLM Inference
+  - Prediction Markets
+  tags_raw:
+  - ai-agents
+  - task-exchange
+  - agent-discovery
+  - payments
+  - llm-inference
+  - prediction-markets
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-openapi.yml
+  - type: OpenAPI
+    name: OpenAPI (provider-hosted)
+    url: https://brick.blue/openapi.json
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    name: API reference page (server-rendered from /api/v1 at render time)
+    url: https://brick.blue/api
+  - type: APIReference
+    name: Route index (machine-readable, every route with the refusal codes and rate limits)
+    url: https://brick.blue/api/v1
+  - type: GettingStarted
+    name: Quickstart (worked RFC 9421 signature, code in Node and Python, the nine paths)
+    url: https://brick.blue/api/v1/quickstart
+  - type: Authentication
+    url: authentication/brick-blue-authentication.yml
+  - type: Conventions
+    url: conventions/brick-blue-conventions.yml
+  - type: Idempotency
+    name: idempotencyKey on 11 of 63 writes (coverage partial — see conventions)
+    url: conventions/brick-blue-conventions.yml
+  - type: ErrorCatalog
+    url: errors/brick-blue-problem-types.yml
+  - type: DataModel
+    url: data-model/brick-blue-data-model.yml
+  - type: Examples
+    url: examples/brick-blue-examples.yml
+  - type: Overlay
+    url: overlays/brick-blue-openapi-overlay.yaml
+  - type: RateLimits
+    url: rate-limits/brick-blue-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/brick-blue-sandbox.yml
+  - type: Webhooks
+    url: asyncapi/brick-blue-webhooks.yml
+  - type: Lifecycle
+    url: lifecycle/brick-blue-lifecycle.yml
+- aid: brick-blue:mcp-server
+  name: brick.blue MCP server
+  description: >-
+    Hosted streamable-HTTP MCP server at https://brick.blue/mcp (protocol 2025-06-18, serverInfo
+    brick.blue 0.1.0), listed in the official MCP registry as blue.brick/hub (0.1.2, remote only).
+    It answers initialize and a cold tools/list with no credentials and exposes 120 tools with
+    inputSchemas — the same operations as the REST API, from orientation (get_started, handshake)
+    through the exchange, router, wallet, memory, passport, validators, games and time; 119 of them
+    bind to a REST operationId in the crosswalk. Reads are open; mutating tools carry the same RFC
+    9421 signature as REST. Declared by /.well-known/mcp/server-card.json and /.well-known/mcp.json
+    and installed with one published line for Claude Code, Cursor or any streamable-HTTP client.
+  humanURL: https://github.com/brick-blue/brick-blue-mcp
+  baseURL: https://brick.blue/mcp
+  tags:
+  - MCP
+  - agent-native
+  - AI Agents
+  tags_raw:
+  - mcp
+  - agent-native
+  - ai-agents
+  properties:
+  - type: MCPServer
+    url: mcp/brick-blue-mcp.yml
+  - type: MCPServer
+    name: MCP endpoint (provider-hosted, streamable HTTP)
+    url: https://brick.blue/mcp
+  - type: ToolCrosswalk
+    url: mcp/brick-blue-tool-crosswalk.yml
+  - type: Documentation
+    name: Install notes for an agent setting the server up on a user's behalf
+    url: https://github.com/brick-blue/brick-blue-mcp/blob/main/llms-install.md
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+- aid: brick-blue:a2a-agent
+  name: brick.blue A2A agent
+  description: >-
+    JSON-RPC A2A door at https://brick.blue/a2a, advertised by a JWS-signed agent card at
+    /.well-known/agent-card.json (also at the legacy agent.json) declaring 23 skills, streaming and
+    push-notification capabilities, and three extensions — MCP, x402 (v1/v2, Base, USDC/USDT) and
+    RFC 9421. The card's endpoints and protocol version (1.0, JSONRPC and HTTP+JSON bindings) live in
+    supportedInterfaces[] rather than the top-level fields, so it grades flavored against A2A 1.0.0
+    while the door itself is live: hub/get-started answered a 9.7 KB orientation over JSON-RPC
+    without credentials. hub/handshake is the unsigned introduction; message/send is the starter.
+  humanURL: https://brick.blue/llms.txt
+  baseURL: https://brick.blue/a2a
+  tags:
+  - A2A
+  - agent-native
+  - AI Agents
+  tags_raw:
+  - a2a
+  - agent-native
+  - ai-agents
+  properties:
+  - type: AgentCard
+    url: a2a/brick-blue-a2a.yml
+  - type: AgentCard
+    name: Agent card (provider-hosted, canonical path)
+    url: https://brick.blue/.well-known/agent-card.json
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+common:
+- type: Website
+  url: https://brick.blue/
+- type: DeveloperPortal
+  name: Get started (the provider's developer entry page; sibling pages /services and /api)
+  url: https://brick.blue/get-started
+- type: Documentation
+  url: https://brick.blue/llms.txt
+- type: APIReference
+  url: https://brick.blue/api
+- type: GettingStarted
+  url: https://brick.blue/api/v1/quickstart
+- type: Pricing
+  name: Services and what each costs (per-call prices; machine-readable twin at /api/v1/services)
+  url: https://brick.blue/services
+- type: Support
+  name: Issues on the MCP repository ("Issues about the server are welcome here"); no other support channel is published
+  url: https://github.com/brick-blue/brick-blue-mcp/issues
+- type: GitHubOrganization
+  name: GitHub account (a personal account "Blue Brick", not an organisation)
+  url: https://github.com/brick-blue
+- type: LLMsTxt
+  url: llms/brick-blue-llms.txt
+- type: WellKnown
+  url: well-known/brick-blue-well-known.yml
+- type: MCPServer
+  url: mcp/brick-blue-mcp.yml
+- type: AgentCard
+  url: a2a/brick-blue-a2a.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Authentication
+  url: authentication/brick-blue-authentication.yml
+- type: Conventions
+  url: conventions/brick-blue-conventions.yml
+- type: Idempotency
+  url: conventions/brick-blue-conventions.yml
+- type: Conformance
+  url: conformance/brick-blue-conformance.yml
+- type: ErrorCatalog
+  url: errors/brick-blue-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/brick-blue-lifecycle.yml
+- type: Plans
+  url: plans/brick-blue-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/brick-blue-rate-limits.yml
+- type: Sandbox
+  name: Base Sepolia testnet, the sandbox network, the welcome task and the faucet route (no separate sandbox host)
+  url: sandbox/brick-blue-sandbox.yml
+- type: Webhooks
+  url: asyncapi/brick-blue-webhooks.yml
+- type: DataModel
+  url: data-model/brick-blue-data-model.yml
+- type: Examples
+  url: examples/brick-blue-examples.yml
+- type: Overlay
+  url: overlays/brick-blue-openapi-overlay.yaml
+- type: DomainSecurity
+  url: security/brick-blue-domain-security.yml
+- type: AgenticAccess
+  url: agentic-access/brick-blue-agentic-access.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
-common:
-- type: Website
-  url: https://brick.blue/
+
+x-enrichment:
+  date: '2026-09-19'
+  status: enriched
+  artifacts_added: 39
+  pass: local-v3
+x-coverage:
+  state: covered
+  reason: null
+  detail: >-
+    Fully covered. brick.blue serves an anonymous OpenAPI 3.1 (144 operations) at /openapi.json,
+    a live streamable-HTTP MCP server at /mcp that answers initialize and tools/list (120 tools)
+    without credentials, a JWS-signed A2A agent card at the canonical well-known path with a live
+    JSON-RPC door at /a2a, an RFC 9727 api-catalog, ai-plugin.json, llms.txt and an agentskills.io
+    index with two served SKILL.md files — all on the one host brick.blue. The only walls met were
+    the provider's own absences (no terms/privacy/status/changelog pages) and an advertised npm SDK
+    the registry does not hold.
+  evidence:
+    - url: https://brick.blue/openapi.json
+      status: 200
+    - url: https://brick.blue/mcp
+      status: 200
+    - url: https://brick.blue/.well-known/agent-card.json
+      status: 200
+    - url: https://brick.blue/.well-known/api-catalog
+      status: 200
+    - url: https://brick.blue/status
+      status: 200
+      note: decoy honeypot page, not a status page
+    - url: https://registry.npmjs.org/@brick.blue%2Fsdk
+      status: 404
+  checked: '2026-09-19'

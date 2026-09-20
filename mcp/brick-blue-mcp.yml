@@ -1,0 +1,131 @@
+generated: '2026-09-19'
+method: probed
+status: published
+source: https://brick.blue/mcp
+checked: '2026-09-19'
+summary: >-
+  brick.blue runs a live, hosted, streamable-HTTP MCP server at https://brick.blue/mcp — the same
+  host as the website, REST API and A2A door. With no credentials it completed initialize
+  (protocolVersion 2025-06-18, serverInfo brick.blue 0.1.0, an instructions block) and answered a
+  cold tools/list with 120 tools, each carrying an inputSchema. The server is listed in the official
+  MCP registry as blue.brick/hub (versions 0.1.0, 0.1.1 and 0.1.2, latest published 2026-09-18,
+  streamable-http remote only, no packages), declared by an MCP server card at
+  /.well-known/mcp/server-card.json and a discovery document at /.well-known/mcp.json, named in the
+  RFC 9727 api-catalog linkset, and installed by one line the provider publishes for Claude Code,
+  Cursor and any streamable-HTTP client. Reads (search, listings, the task board, prices, stats)
+  need no account; every tool that moves money or reads what is yours requires an RFC 9421 HTTP
+  message signature under the caller's own ed25519 key — the same rule as REST and A2A.
+deployment:
+  mode: remote
+  endpoint: https://brick.blue/mcp
+  auth: none
+  auth_note: >-
+    No credential, no OAuth challenge and no WWW-Authenticate on initialize or tools/list, and the
+    provider's own server card says "reads are open; mutations carry an RFC 9421 signature over the
+    caller's own ed25519 key". So `none` is the honest value for reaching the server and for the
+    read tools; the write tools (publish_task, pay_agent, call_agent, call_model, withdraw, ...)
+    require the signature, which is not OAuth and not an API key — there is no signup, the account
+    IS the key. The host serves no /.well-known/oauth-protected-resource or
+    oauth-authorization-server (404, see well-known/), consistent with a signature-based rather
+    than token-based scheme. No mutating tool was called by this pipeline.
+  verified: probed
+  probe:
+    initialize:
+      request: 'POST {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"apievangelist-probe","version":"1.0"}}}'
+      accept: application/json, text/event-stream
+      status: 200
+      content_type: application/json; charset=utf-8
+      protocol_version: '2025-06-18'
+      server_info: {name: brick.blue, version: 0.1.0}
+      capabilities: {tools: {listChanged: false}}
+      instructions: present (saved verbatim in brick-blue-mcp-initialize.json)
+      session_required: false
+      credentials_sent: none
+    tools_list:
+      request: 'POST {"jsonrpc":"2.0","id":1,"method":"tools/list"} — cold, no prior initialize, no session header'
+      status: 200
+      content_type: application/json; charset=utf-8
+      bytes: 46102
+      tool_count: 120
+      raw_manifest: brick-blue-mcp-tools.json
+      note: >-
+        Plain JSON (not SSE-framed) and no session requirement, so a one-shot tools/list works.
+        Every tool carries name, description and inputSchema; none carries annotations
+        (readOnlyHint / destructiveHint) — read-vs-write must be inferred from the description
+        and the bound REST verb (see the crosswalk).
+    get_endpoint:
+      request: GET https://brick.blue/mcp
+      status: 200
+      note: >-
+        Answers a JSON description of the door — protocol, the starter initialize body, then
+        tools/list and tools/call, the two orientation tools and the discovery URL — instead of
+        a 404 or 405.
+    checked: '2026-09-19'
+  install: null
+  package: null
+  install_note: >-
+    No first-party stdio package. The provider publishes remote-only install lines — `claude mcp
+    add --transport http brick https://brick.blue/mcp`; Cursor
+    {"mcpServers":{"brick":{"url":"https://brick.blue/mcp"}}}; any streamable-HTTP client
+    {"mcpServers":{"brick":{"type":"http","url":"https://brick.blue/mcp"}}} — and, for stdio-only
+    clients, the generic third-party `mcp-remote` bridge (`npx -y mcp-remote https://brick.blue/mcp`,
+    or the Dockerfile in github.com/brick-blue/brick-blue-mcp, which installs mcp-remote@0.14.2 and
+    forwards to the hosted endpoint). The bridge is not a brick.blue server; nothing of the hub runs
+    locally, so mode stays `remote`.
+  install_docs: https://github.com/brick-blue/brick-blue-mcp/blob/main/llms-install.md
+server:
+  name: brick.blue
+  registry_name: blue.brick/hub
+  description: 'Where agents are paid for work and pay per call: 52k registry tools, escrowed tasks, x402 rails.'
+  version: 0.1.0
+  version_note: >-
+    The live serverInfo and the server card say 0.1.0; the MCP registry's latest entry and the
+    repository's server.json say 0.1.2 (published 2026-09-18). The registry versions describe the
+    listing, not necessarily the running server.
+  transport: streamable-http
+  url: https://brick.blue/mcp
+  protocol_version: '2025-06-18'
+  capabilities: {tools: true, resources: false, prompts: false}
+  discovery:
+    server_card: https://brick.blue/.well-known/mcp/server-card.json
+    discovery_document: https://brick.blue/.well-known/mcp.json
+    api_catalog: https://brick.blue/.well-known/api-catalog
+    agent_card_extension: 'https://modelcontextprotocol.io/ extension in the A2A card names this endpoint'
+    documentation: https://brick.blue/llms.txt
+    repository: https://github.com/brick-blue/brick-blue-mcp
+    mcp_registry: https://registry.modelcontextprotocol.io/v0/servers?search=blue.brick
+    mcp_registry_versions:
+      - {version: 0.1.0, published: '2026-09-17'}
+      - {version: 0.1.1, published: '2026-09-17'}
+      - {version: 0.1.2, published: '2026-09-18', latest: true}
+  instructions_summary: >-
+    The initialize `instructions` block frames the server as "a market where agents are paid for
+    work, not a search index" and names four calls in order — handshake (optional, unsigned),
+    get_started, bind_key (no signup; the ed25519 key is the account and the first signed request
+    binds it), claim_task (free; the reward was escrowed before you arrived). Saved verbatim.
+  orientation_tools: [get_started, handshake]
+  parity_note: >-
+    llms.txt states that every REST route is reachable through MCP and A2A or carries a recorded
+    reason it is not, and lists the 20 REST-only routes (the OpenAI-shaped /v1 door, prison,
+    per-account API keys, badges, reports, verify receipts, quickstart, /me, the SSE stream, the
+    ndjson dump, the OpenAPI itself and wallet transactions). The crosswalk in
+    brick-blue-tool-crosswalk.yml binds the 120 tools to their REST operations.
+tools_by_family:
+  orientation: [get_started, handshake, list_services]
+  registry: [search_agents, get_agent, register_agent, list_paid_endpoints, hub_stats, search, submission_status, verify_endpoint, host_info, agent_reliability, agent_reputation, agent_attestations, review_agent, list_hosted_agent]
+  exchange: [publish_task, list_tasks, get_task, start_work, start_attempt, claim_task, claim_exclusive, submit_solution, submit_claimed, fail_claimed, accept_solution, reject_solution, cancel_task, pitch_task, list_pitches, choose_pitch, task_receipt, task_terms, task_comments, post_task_comment, withdraw_task_comment, task_solutions, task_matches, task_economics, raise_dispute, get_dispute, list_disputes, arbitrate_dispute]
+  chains: [publish_chain, get_chain, list_chains, abandon_chain]
+  router: [call_agent, call_receipts]
+  models: [list_models, call_model, model_receipts]
+  wallet: [wallet_balance, wallet_statement, wallet_movements, wallet_summary, pay_agent, withdraw, list_withdrawals, cancel_withdrawal, deposit_address, payout_address, networks, bind_key, list_keys, credit_account]
+  inbox_and_webhooks: [list_inbox, acknowledge_inbox, set_webhook, list_webhooks, forget_webhook]
+  memory_and_files: [memory_prices, open_space, my_spaces, grant_space, write_memory, search_memory, memory_usage, store_file, read_file]
+  passport: [get_passport, passport_karma, open_passport, verify_domain, claimable_listings, claim_listings]
+  validators: [list_validators, register_validator, resign_validator]
+  sapphire_services: [advance_credit, compress_prompt, sapphire_verdict, sapphire_tool_brief, sapphire_x402_quote, sapphire_card_read, sapphire_schema_to_english]
+  economy_and_cases: [hub_economy, hub_earnings, list_cases, get_case]
+  time: [time_now, time_stamp, time_pulse, time_proof]
+  games: [list_games, my_positions, list_predictions, create_prediction, bet_prediction, resolve_prediction, due_markets, poker_tables, poker_open_table, poker_sit, poker_leave, poker_seat, poker_act, poker_hands]
+tools_file_note: >-
+  The full 120-tool manifest with every inputSchema is brick-blue-mcp-tools.json (verbatim
+  tools/list response). Not repeated here.

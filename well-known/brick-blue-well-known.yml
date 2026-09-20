@@ -1,0 +1,183 @@
+generated: '2026-09-19'
+method: probed
+source: live probes of the named /.well-known/ path list on every brick.blue host, 2026-09-19
+checked: '2026-09-19'
+summary: >-
+  brick.blue publishes an unusually complete discovery surface, all on one host. Of the named
+  list, two documents are served — an RFC 9727 api-catalog linkset at /.well-known/api-catalog
+  (application/linkset+json, naming the OpenAPI, llms.txt, the A2A card, the MCP server card, the
+  agent-skills index, the signing keys, the x402 paywall map and a health URL) and an
+  ai-plugin.json (auth none, api type openapi -> https://brick.blue/openapi.json). Beyond the list,
+  the linkset led to five more first-party documents, saved here: the MCP server card, the
+  agent-skills discovery index (agentskills.io discovery 0.2.0), the ed25519 key set the hub signs
+  its answers with, the x402 paywall map, and the MCP discovery document /.well-known/mcp.json that
+  llms.txt names. The A2A card is served at both the canonical and legacy paths and is registered
+  in a2a/. NOT served: security.txt (RFC 9116), OIDC discovery, RFC 8414 / RFC 9728 OAuth metadata
+  (the MCP server is on this same host, so the MCP-host probe is this probe; auth is RFC 9421
+  signatures, not OAuth), AAuth, UCP/ACP, and any apis.json / apis.yml index.
+pointer_basis: >-
+  WellKnown is emitted on the strength of the served api-catalog (the exact document the
+  well_known_catalog dimension is about) and ai-plugin.json. SecurityTxt is NOT emitted: no
+  security.txt on any host. The agent card is registered separately as AgentCard via
+  a2a/brick-blue-a2a.yml; the MCP server as MCPServer via mcp/brick-blue-mcp.yml.
+host_set_note: >-
+  Seven roles, ONE host. The registrable domain, its www., the REST baseURL host, the OpenAPI
+  servers[] host (https://brick.blue), the docs host (llms.txt and /api/v1 are served from the
+  apex), the MCP server host (https://brick.blue/mcp) and the A2A host (https://brick.blue/a2a)
+  are all brick.blue. api., docs., mcp. and app. subdomains answer Cloudflare 525 (SSL handshake
+  failed at origin) — configured in DNS, not serving — and are recorded below so the absence is
+  visible. No fetched discovery document names an authorization server on a third host.
+hosts:
+  - host: https://brick.blue
+    roles: [website, api, docs, mcp, a2a]
+    documents:
+      - path: /.well-known/api-catalog                 # RFC 9727
+        status: 200
+        file: brick-blue-api-catalog.json
+        content_type: application/linkset+json; charset=utf-8
+        bytes: 932
+        note: >-
+          One linkset anchored at https://brick.blue/ with service-desc (openapi.json,
+          application/openapi+json), service-doc (llms.txt; /api/v1), five service-meta links
+          (A2A card, MCP server card, agent skills, signing keys, x402) and a status link
+          (/healthz). Parsed; the required linkset[] with anchor + service-desc is present.
+      - path: /.well-known/api-catalog.json
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 200
+        file: brick-blue-ai-plugin.json
+        content_type: application/json; charset=utf-8
+        bytes: 544
+        note: 'schema_version v1, name_for_model brick_blue, auth {type: none}, api {type: openapi, url: https://brick.blue/openapi.json}, legal_info_url llms.txt.'
+      - path: /.well-known/agent-card.json             # A2A — registered in a2a/
+        status: 200
+        file: ../a2a/brick-blue-agent-card.json
+        content_type: application/json; charset=utf-8
+        bytes: 19599
+        note: Graded flavored in a2a/brick-blue-a2a.yml (no top-level protocolVersion/url).
+      - path: /.well-known/agent.json                  # legacy A2A path
+        status: 200
+        file: ../a2a/brick-blue-agent-card.json
+        note: Identical body to the canonical path.
+      - path: /.well-known/mcp/server-card.json        # named by the api-catalog linkset
+        status: 200
+        file: brick-blue-mcp-server-card.json
+        content_type: application/json; charset=utf-8
+        bytes: 619
+        note: 'name blue.brick/hub, transports [streamable-http https://brick.blue/mcp], auth {type: none, note: reads open; mutations RFC 9421}, repository github.com/brick-blue/brick-blue-mcp, registry link.'
+      - path: /.well-known/mcp.json                    # named by llms.txt and the /mcp door
+        status: 200
+        file: brick-blue-mcp.json
+        content_type: application/json; charset=utf-8
+        bytes: 233
+        note: '{version: mcp1, url: https://brick.blue/mcp, proto: streamable-http, scope: [tools], name, description}.'
+      - path: /.well-known/agent-skills/index.json     # named by the api-catalog linkset
+        status: 200
+        file: brick-blue-agent-skills-index.json
+        content_type: application/json; charset=utf-8
+        bytes: 911
+        note: >-
+          $schema https://schemas.agentskills.io/discovery/0.2.0/schema.json; two skill-md entries
+          (brick-blue, brick-blue-verify) with url, sha256 and version 0.1.0. Both SKILL.md files
+          were fetched and their sha256 matched the index; saved verbatim in skills/.
+      - path: /.well-known/brick-blue-keys.json        # named by the api-catalog linkset and the card's JWS jku
+        status: 200
+        file: brick-blue-keys.json
+        content_type: application/json; charset=utf-8
+        bytes: 956
+        note: 'One active ed25519 key (keyId E84xNrn4yKd23dVAc9XpmUEX6qutjGDizompmYKtSPEY) used for the agent card, time pulses, verdicts, paid answers and model receipts; canonicalisation rules; retired: [].'
+      - path: /.well-known/x402                        # named by the api-catalog linkset
+        status: 200
+        file: brick-blue-x402.json
+        content_type: application/json; charset=utf-8
+        bytes: 76954
+        note: >-
+          version 1; resources[] = the six first-party paid doors (models/chat and the five
+          Sapphire services) that answer 402 with a quote to an unsigned request; endpoints[] = 50
+          third-party x402 resources the registry has priced (with x402Version, networks, assets,
+          minAmount, price). Third-party rows are the registry's observations, not brick.blue's own surface.
+      - path: /.well-known/security.txt                # RFC 9116
+        status: 404
+        body: '{"error":"no such document on this origin", ...publishes: linkset}'
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server  # RFC 8414
+        status: 404
+      - path: /.well-known/oauth-protected-resource    # RFC 9728 — this host IS the MCP resource server
+        status: 404
+      - path: /.well-known/aauth-resource.json
+        status: 404
+      - path: /.well-known/ucp.json
+        status: 404
+      - path: /.well-known/acp.json
+        status: 404
+      - path: /.well-known/apis.json
+        status: 404
+      - path: /apis.json
+        status: 404
+        note: 7,204-byte HTML 404 page (the SvelteKit app's not-found route), not an index.
+      - path: /apis.yml
+        status: 404
+      - path: /security.txt
+        status: 404
+    soft_404_control:
+      path: /.well-known/brick-blue-negative-control-7c2f91ab.json
+      status: 404
+      bytes: 1083
+      content_type: application/json; charset=utf-8
+      body: '{"error":"no such document on this origin","note":"What this origin does publish is below; the same list is at /.well-known/api-catalog.","publishes":{"linkset":[...]}}'
+      verdict: >-
+        Clean 404 with a body that enumerates what the origin does publish — the same linkset as
+        /.well-known/api-catalog. Under /.well-known/ every miss is this 1,083-byte JSON; outside it
+        misses are the app's ~7.2 KB HTML 404. Every 200 above is therefore a genuine served document.
+    path_echo_control: passed
+    hit_count: 9
+  - host: https://www.brick.blue
+    roles: [website-alias]
+    documents:
+      - path: /.well-known/api-catalog
+        status: 200
+        file: brick-blue-api-catalog.json
+        note: Same 932-byte linkset as the apex.
+      - path: /.well-known/ai-plugin.json
+        status: 200
+        file: brick-blue-ai-plugin.json
+        note: Same body as the apex.
+      - path: /.well-known/agent-card.json
+        status: 200
+        file: ../a2a/brick-blue-agent-card.json
+      - path: /.well-known/agent.json
+        status: 200
+        file: ../a2a/brick-blue-agent-card.json
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/aauth-resource.json
+        status: 404
+      - path: /.well-known/ucp.json
+        status: 404
+      - path: /.well-known/acp.json
+        status: 404
+      - path: /.well-known/apis.json
+        status: 404
+      - path: /apis.json
+        status: 404
+      - path: /apis.yml
+        status: 404
+    soft_404_control:
+      path: /.well-known/brick-blue-negative-control-9d1e44f0.json
+      status: 404
+      bytes: 1083
+      verdict: Same behaviour as the apex — www. is an alias of the same origin.
+    path_echo_control: passed
+    hit_count: 4
+  - host: https://api.brick.blue
+    roles: [dns-configured-not-serving]
+    documents: []
+    status: 525
+    note: 'Cloudflare 525 (SSL handshake failed at origin) for every path; nothing is served here. Also 525: docs.brick.blue, mcp.brick.blue, app.brick.blue.'

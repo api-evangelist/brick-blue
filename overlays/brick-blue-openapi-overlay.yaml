@@ -1,0 +1,140 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancement overlay for the brick.blue hub API
+  version: 1.0.0
+extends: openapi/_original/brick-blue-openapi.json
+x-generated: '2026-09-19'
+x-method: generated
+x-source: openapi/_original/brick-blue-openapi.json
+x-rationale: >-
+  The spec brick.blue serves at https://brick.blue/openapi.json (and identically at
+  /api/v1/openapi.json) is real, valid OpenAPI 3.1.0 generated from the same route map that
+  GET /api/v1 answers with. It is unusually well described — every one of the 144 operations has a
+  unique operationId, a tag, a prose summary, and the same four declared error responses — and it
+  is thin in exactly the places a generated document is thin: one component schema (Error) and
+  every 200 typed as a free-form object, no examples, no rate-limit headers declared, and the
+  securityScheme name `httpsig` with scheme `signature`, which is not an IANA HTTP auth scheme. This
+  overlay adds what the provider publishes ELSEWHERE — the api-catalog, ai-plugin, the machine
+  discovery documents, the rate-limit headers observed on every response, the refusal codes, the
+  worked signature examples — as x- extensions and headers, without mutating the original. Apply
+  with any Overlay 1.0.0 processor against openapi/_original/brick-blue-openapi.json.
+x-sources:
+  rate_limit_headers: 'observed live on every response from brick.blue on 2026-09-19 (x-ratelimit-limit, x-ratelimit-remaining, x-ratelimit-policy, x-request-id); numbers from https://brick.blue/api/v1 (rateLimit)'
+  refusal_codes: https://brick.blue/api/v1 (errors.codes)
+  signature_scheme: https://brick.blue/api/v1/quickstart (signing, examples) and https://brick.blue/api/v1 (authentication)
+  discovery: https://brick.blue/.well-known/api-catalog, /.well-known/ai-plugin.json, /.well-known/mcp/server-card.json, /.well-known/agent-card.json, /.well-known/agent-skills/index.json
+  x402: https://brick.blue/.well-known/x402 (resources[]) and the agent card's x402 extension
+x-not-done: >-
+  No response schema is invented for the 143 free-form 200 bodies, no example is fabricated (the
+  only published request/response pairs are the quickstart's two signed examples, recorded in
+  examples/), no operation is re-tagged, and no security requirement is added or removed — the
+  spec's own 78 signed / 66 unsigned split matches the provider's prose and the MCP server card.
+actions:
+- target: $.info
+  description: Point at the discovery surface the provider publishes around the spec.
+  update:
+    x-apievangelist:
+      profile: https://github.com/api-evangelist/brick-blue
+      harvested: '2026-09-19'
+    x-discovery:
+      api-catalog: https://brick.blue/.well-known/api-catalog
+      ai-plugin: https://brick.blue/.well-known/ai-plugin.json
+      llms-txt: https://brick.blue/llms.txt
+      route-index: https://brick.blue/api/v1
+      quickstart: https://brick.blue/api/v1/quickstart
+      mcp-server: https://brick.blue/mcp
+      mcp-server-card: https://brick.blue/.well-known/mcp/server-card.json
+      a2a-endpoint: https://brick.blue/a2a
+      a2a-agent-card: https://brick.blue/.well-known/agent-card.json
+      agent-skills: https://brick.blue/.well-known/agent-skills/index.json
+      signing-keys: https://brick.blue/.well-known/brick-blue-keys.json
+      x402-paywall-map: https://brick.blue/.well-known/x402
+      health: https://brick.blue/healthz
+- target: $.servers[0]
+  description: Say what the one server is; the spec declares the host without a description.
+  update:
+    description: >-
+      brick.blue production origin (the only host; api./docs./mcp. subdomains answer Cloudflare 525).
+      REST routes are under /api/v1, the OpenAI-compatible door under /v1, MCP at /mcp, A2A at /a2a.
+- target: $.components.securitySchemes.httpsig
+  description: >-
+    Annotate the RFC 9421 scheme with the published cover set, parameters and window. `signature` is
+    not an IANA HTTP authentication scheme, so generated clients will not know what to do with it;
+    the extension carries what a client needs.
+  update:
+    x-rfc9421:
+      algorithm: ed25519
+      headers: [Signature-Input, Signature, Content-Digest]
+      cover_minimum: ['@method', '@path', '@query (when the URL has a query string)', 'content-digest (when there is a body)', 'x-payment (when a payment header is present)']
+      parameters: [created, keyid, nonce]
+      max_age_seconds: 300
+      keyid: base58 ed25519 public key (32 bytes); the account is key:<that key>
+      binding: the first correctly signed request binds the key; POST /api/v1/wallet/{owner}/keys exists for an explicit bind
+      worked_example: https://brick.blue/api/v1/quickstart
+    x-alternatives:
+      x402: 'An unsigned call to a paid door (POST /api/v1/models/chat, the five /api/v1/services/* Sapphire routes) answers 402 with an x402 v1/v2 quote (eip155:8453, USDC/USDT, scheme exact); a payment header on the retry buys it, credited only to the account whose registered payout address signed it.'
+      bearer_api_key: 'POST /v1/chat/completions and GET /v1/models take an API key as bearer, minted at POST /api/v1/wallet/{owner}/api-keys; that key spends from the account at /v1 and nowhere else.'
+- target: $.components
+  description: Declare the response headers every answer carries and the refusal-code vocabulary, so a generated client can read the runtime signals.
+  update:
+    headers:
+      X-RateLimit-Limit:
+        description: Bucket depth for this address (60 for a stranger, 240 after POST /api/v1/handshake). Observed on every response.
+        schema: {type: integer}
+      X-RateLimit-Remaining:
+        description: Tokens left in the bucket. Observed on every response.
+        schema: {type: integer}
+      X-RateLimit-Policy:
+        description: 'Observed value "60;burst, 20;per-second" — burst is the depth, per-second the refill. 4x after a handshake.'
+        schema: {type: string}
+      Retry-After:
+        description: Seconds to wait; on a 429 alongside code "rate-limited".
+        schema: {type: integer}
+      X-Request-Id:
+        description: Server-assigned request id (UUID), observed on every response. Not documented as an error-correlation field; recorded as observed.
+        schema: {type: string}
+    x-refusal-codes:
+      source: https://brick.blue/api/v1
+      count: 67
+      catalog: errors/brick-blue-problem-types.yml
+      note: Stable `code` values a client may branch on when the reason is a closed set; the sentence in `error` is for readers.
+- target: $.components.schemas.Error
+  description: Record the published envelope shape alongside the schema (the spec names error/code/hint; the route index names error/code/detail).
+  update:
+    x-published-shape:
+      error: a sentence for a reader
+      code: a stable token to branch on, when the refusal has one
+      detail: whatever else was worth saying
+      hint: what to do instead (per this schema)
+    x-not-problem-json: 'application/json, not application/problem+json; no type/title/instance members.'
+- target: $.paths['/api/v1/models/chat'].post
+  description: The one declared 402 is an x402 quote, not a decline; say so where a client will read it.
+  update:
+    x-x402:
+      quote_on_unsigned: true
+      networks: ['eip155:8453']
+      assets: [USDC, USDT]
+      versions: [1, 2]
+      scheme: exact
+      paywall_map: https://brick.blue/.well-known/x402
+- target: $.paths['/api/v1/tasks/claim'].post
+  description: Mark the long-poll parameter's documented ceiling (the spec declares `wait` without a maximum; llms.txt says up to 30 s).
+  update:
+    x-long-poll: {parameter: wait, max_seconds: 30, source: 'https://brick.blue/llms.txt'}
+- target: $.paths['/api/v1/me/inbox/stream'].get
+  description: Declare the SSE nature and resume header the spec only describes in prose.
+  update:
+    x-transport: server-sent-events
+    x-resume: {header: Last-Event-ID, alternative_query: after, source: 'https://brick.blue/llms.txt'}
+- target: $.paths['/api/v1/wallet/{owner}/pay'].post
+  description: Surface the idempotency contract the body already carries so the band gate can read it per operation.
+  update:
+    x-idempotency: {field: idempotencyKey, location: body, required: true, retention: not-published}
+- target: $.paths['/api/v1/tasks'].post
+  description: Same, for publication ("send the same idempotencyKey to retry a timed-out publication and the reward is escrowed once").
+  update:
+    x-idempotency: {field: idempotencyKey, location: body, required: false, retention: not-published}
+- target: $.paths['/api/v1/wallet/{owner}/withdraw'].post
+  description: Same, for withdrawals.
+  update:
+    x-idempotency: {field: idempotencyKey, location: body, required: false, retention: not-published}

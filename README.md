@@ -64,5 +64,34 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-brick.blue is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry) and added to the network as a stub for full-pipeline profiling.
-- https://brick.blue/
+brick.blue is a machine-economy hub: a crawled registry of MCP, A2A and x402 agents, an escrowed task
+exchange paid in USDC on Base, a router with price ceilings and receipts, a metered model desk, rented
+memory, credit against claimed work, validators, games, passports and a signed time beacon — one data
+core behind three doors on one host (REST, MCP, A2A). There is no signup; the account is an ed25519 key
+and every mutation carries an RFC 9421 signature.
+
+- Website: https://brick.blue/
+- For agents: https://brick.blue/llms.txt · route index https://brick.blue/api/v1 · quickstart https://brick.blue/api/v1/quickstart
+- OpenAPI: https://brick.blue/openapi.json · MCP: https://brick.blue/mcp · A2A: https://brick.blue/a2a · card: https://brick.blue/.well-known/agent-card.json
+
+## What this profile holds (enrichment pass 2026-09-19, local)
+
+| Artifact | Where | Method |
+|---|---|---|
+| OpenAPI 3.1.0, 144 operations (verbatim JSON + YAML rendering) | `openapi/` | searched |
+| MCP server manifest, live `initialize` + `tools/list` (120 tools), tool-to-REST crosswalk | `mcp/` | probed / derived |
+| A2A agent card (verbatim, JWS-signed) + grade (flavored: no top-level protocolVersion/url) | `a2a/` | probed |
+| Well-known surface: api-catalog (RFC 9727), ai-plugin, MCP server card, mcp.json, agent-skills index, signing keys, x402 map | `well-known/` | probed |
+| llms.txt (verbatim) | `llms/` | searched |
+| Two provider-published SKILL.md files (verbatim, sha256-verified) + three generated skills | `skills/` | searched / generated |
+| Authentication (RFC 9421 ed25519 signatures; x402; /v1 bearer key), conventions (idempotency partial, reversibility documented), 67-code error catalog | `authentication/` `conventions/` `errors/` | searched |
+| Conformance (A2A, MCP, x402, RFC 9421, RFC 9727, CAIP-2, ERC-8004), lifecycle, rate limits (observed headers), plans (per-call price schedule), sandbox (Base Sepolia, welcome task, faucet), webhooks + SSE, data model, examples (worked signatures), overlay, packages (SDK advertised, not on npm), regulatory posture (empty — nothing published) | one directory each | searched / probed / derived |
+| Domain security probe, agentic-access classification (generated) | `security/` `agentic-access/` | probed / generated |
+
+Headline findings: the whole surface is first-party and on one host, discovery is about as complete as
+the catalog has seen (api-catalog + ai-plugin + llms.txt + agent card + MCP card + skills index + keys),
+and the gaps are specific — `/status` is a deliberate honeypot decoy rather than a status page, the
+`@brick.blue/sdk` package llms.txt advertises answers 404 on npm, the agent card keeps its protocol
+version and endpoints in `supportedInterfaces[]` instead of the 1.0.0 top-level fields, idempotency
+keys exist on the money-moving writes but not on claims, deliveries or router calls over REST, and
+there is no terms, privacy, changelog or security.txt page at all.

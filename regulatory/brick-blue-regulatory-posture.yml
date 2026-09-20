@@ -1,0 +1,102 @@
+generated: '2026-09-19'
+method: searched
+probe: true
+source: >-
+  Artifacts harvested this run (well-known/, security/, lifecycle/, conformance/), the sitemap.xml
+  (3,636 URLs — 3,583 agent listings, the rest product pages; no legal page of any kind), the
+  homepage link set, https://brick.blue/llms.txt, https://brick.blue/bot (crawler policy page) and
+  live probes of the conventional regulatory and legal paths on brick.blue on 2026-09-19.
+checked: '2026-09-19'
+harvest_only: true
+harvest_only_note: >-
+  This file records WHAT brick.blue publishes. It does not decide which regimes reach the operator
+  — that is the Kin Score regime map's job, not this artifact's.
+summary: >-
+  brick.blue publishes NO legal or regulatory surface at all: no terms of service, no privacy
+  policy, no accessibility statement, no subprocessor list, no DPA, no data-residency statement,
+  no incident-notification commitment, no transparency report, no SBOM, no support-lifetime
+  statement, no GPC statement, no age signal, no notice-and-action channel and no exit/export
+  page. /terms, /privacy, /legal/*, /trust, /security, /accessibility, /transparency, /ai and
+  /api/v1/terms all 404. The operator is identified only as "brick.blue" (agent card provider
+  block, GitHub account "Blue Brick"); no company name, jurisdiction or contact address is
+  published anywhere the pipeline reached. What the provider DOES publish that is adjacent — a
+  crawler policy page (/bot: what BrickBlueBot fetches, never calls, and how to opt out), a robots.txt
+  that welcomes crawling, a signed-answer key set, and an operational statement that memory is
+  rented and an unpaid account goes read-only "rather than losing anything" — is none of the
+  fourteen signals. signals is empty; the absence is the measurement, for a service that moves
+  stablecoin between agents and sells model inference.
+signals: {}
+absent_signals:
+  terms_and_privacy:
+    present: false
+    note: 'Neither a terms-of-service nor a privacy-policy page exists. The ai-plugin manifest points legal_info_url at llms.txt, which carries no legal text.'
+    probes:
+      - {url: 'https://brick.blue/terms', status: 404}
+      - {url: 'https://brick.blue/privacy', status: 404}
+      - {url: 'https://brick.blue/legal', status: 404}
+      - {url: 'https://brick.blue/legal/terms', status: 404}
+      - {url: 'https://brick.blue/legal/privacy', status: 404}
+      - {url: 'https://brick.blue/api/v1/terms', status: 404}
+  subprocessors:
+    present: false
+    note: 'No list. Observable infrastructure (Cloudflare in front, Caddy origin, a model aggregator behind GET /api/v1/models with source "live") is not a published subprocessor table.'
+    probes: [{url: 'https://brick.blue/legal/subprocessors', status: 404}, {url: 'https://brick.blue/legal/dpa', status: 404}]
+  data_subject_request:
+    present: false
+    note: 'No privacy page, no requests channel, no contact address for the operator. The MCP repository''s issue tracker is the only published human contact path and is not a privacy channel.'
+    probes: [{url: 'https://brick.blue/privacy/requests', status: 404}]
+  data_residency:
+    present: false
+    note: 'No region or hosting statement. Settlement chains (Base, Base Sepolia) are published as networks, which is not residency.'
+    probes: [{url: 'https://brick.blue/docs/data-residency', status: 404}]
+  incident_notification:
+    present: false
+    probes: [{url: 'https://brick.blue/security', status: 404}, {url: 'https://brick.blue/trust', status: 404}]
+  accessibility_conformance:
+    present: false
+    probes: [{url: 'https://brick.blue/accessibility', status: 404}, {url: 'https://brick.blue/accessibility/vpat', status: 404}]
+  ai_transparency:
+    present: false
+    note: >-
+      The hub sells model inference (60 models, GET /api/v1/models) and runs an "injection" detector
+      over listings with disclosed `injectionSignals` and `contentIsUntrusted` flags — an operating
+      transparency toward agents, not an Article-50-style notice toward people. Not credited.
+    probes: [{url: 'https://brick.blue/ai', status: 404}, {url: 'https://brick.blue/ai/transparency', status: 404}]
+  training_data_summary:
+    present: false
+  transparency_report:
+    present: false
+    note: 'GET /api/v1/reports/registry-truth and /reports/x402-methodology are methodology reports about the REGISTRY''s measurements, not a transparency report about the operator''s handling of requests, removals or law-enforcement contact. Not credited.'
+    probes: [{url: 'https://brick.blue/transparency', status: 404}]
+  notice_and_action:
+    present: false
+    note: 'No report-content channel. Listings are demoted for injection signals by the hub''s own detector; there is no published way for a third party to flag a listing or task.'
+    probes: [{url: 'https://brick.blue/legal/report-content', status: 404}]
+  sbom:
+    present: false
+    note: 'Search only, never derived. Nothing at /security/sbom; the MCP repository ships a Dockerfile (node:22-alpine + mcp-remote@0.14.2) for a bridge, not the hub, and no SBOM.'
+    probes: [{url: 'https://brick.blue/security/sbom', status: 404}]
+  support_lifetime:
+    present: false
+    note: 'No support period or versioning page. See lifecycle/ (no deprecation policy).'
+  global_privacy_control:
+    present: false
+    note: 'No privacy policy, hence no statement. Not probed by header, by rule.'
+  age_assurance:
+    present: false
+    note: 'The hub runs real-money games (poker with rake, prediction markets with stakes) and publishes no age or eligibility statement of any kind.'
+  exit_assistance:
+    present: false
+    note: 'No export page. Operationally, wallet withdrawal (postWalletByOwnerWithdraw) and file reads (getFilesByOwnerByKey) exist; no bulk export or account-closure operation is declared.'
+adjacent_published_surfaces:
+  crawler_policy:
+    url: https://brick.blue/bot
+    status: 200
+    note: 'What BrickBlueBot indexes, what it never calls, and how to opt out (per the MCP repository README). An operator-to-operator courtesy page, not a regulatory signal.'
+  robots_txt:
+    url: https://brick.blue/robots.txt
+    status: 200
+    note: 'Allow: / with Disallow on /ops, /agents.json and query URLs; a preamble addressed to agents.'
+  signed_answers:
+    url: https://brick.blue/.well-known/brick-blue-keys.json
+    note: 'The hub''s own ed25519 signing keys for its answers; integrity, not privacy.'

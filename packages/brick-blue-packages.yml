@@ -1,0 +1,112 @@
+generated: '2026-09-19'
+method: searched
+source: >-
+  Registry metadata read unauthenticated on 2026-09-19 — registry.npmjs.org (package document for
+  @brick.blue/sdk, search for "brick.blue", "brickblue" and scope:brick.blue), pypi.org/pypi JSON
+  for brickblue / brick-blue / brick.blue, the official MCP registry
+  (registry.modelcontextprotocol.io/v0/servers?search=blue.brick), the GitHub account
+  github.com/brick-blue (8 public repositories) and the provider's llms.txt "SDK" section.
+checked: '2026-09-19'
+summary:
+  first_party_package_count: 0
+  official_client_sdk_count: 0
+  third_party_package_count: 0
+  note: >-
+    brick.blue ADVERTISES one first-party SDK — llms.txt says "@brick.blue/sdk
+    (https://www.npmjs.com/package/@brick.blue/sdk): a TypeScript framework for agents that trade
+    here — identity, signing, the ledger of what a trade cost against what it paid, and a paper mode
+    that is structurally impossible to skip. Zero runtime dependencies" — and the quickstart's judge
+    sequence says "the SDK ships one" (a verdict endpoint). The npm registry does not hold it:
+    registry.npmjs.org/@brick.blue/sdk answers 404 {"error":"Not found"} (both URL encodings),
+    the scoped search returns zero objects, and no unscoped package matches. So the package is
+    announced but not published, or was unpublished. Recorded with version null — an honest gap and
+    a dead pointer in the provider's own documentation, not a package. No Packages or SDKs pointer
+    is emitted in apis.yml. The integration surface that DOES exist is HTTP-native: the OpenAPI, the
+    MCP endpoint, the A2A door, the OpenAI-compatible /v1 door for any OpenAI-shaped SDK, and the
+    signing code in Node and Python published inline at GET /api/v1/quickstart.
+packages:
+  - language: typescript
+    registry: npm
+    name: '@brick.blue/sdk'
+    url: https://www.npmjs.com/package/@brick.blue/sdk
+    install: npm install @brick.blue/sdk
+    official: true
+    status: advertised-not-published
+    version: null
+    published: null
+    probes:
+      - {url: 'https://registry.npmjs.org/@brick.blue%2Fsdk', status: 404, body: '{"error":"Not found"}'}
+      - {url: 'https://registry.npmjs.org/@brick.blue/sdk', status: 404}
+      - {url: 'https://registry.npmjs.org/-/v1/search?text=scope:brick.blue&size=10', status: 200, objects: 0}
+      - {url: 'https://www.npmjs.com/package/@brick.blue/sdk', status: 403, note: 'npm website bot challenge; the registry API above is the authority'}
+    advertised_in: https://brick.blue/llms.txt ("SDK" section)
+    note: >-
+      The description the provider gives (identity, signing, cost ledger, mandatory paper mode) is
+      recorded from llms.txt only; nothing here was read from a package. If it appears on npm later,
+      re-read version/published from registry.npmjs.org and drop this status.
+openai_compatible_door:
+  note: >-
+    Not a package, but the reason no SDK is strictly needed for model calls: "Any OpenAI-shaped SDK
+    works by pointing base_url at https://brick.blue/v1 with a key minted at POST
+    /api/v1/wallet/{owner}/api-keys" (llms.txt). Operations postV1ChatCompletions and getV1Models.
+inline_code:
+  - source: https://brick.blue/api/v1/quickstart
+    languages: [node, python]
+    what: 'Code that produces a correct RFC 9421 ed25519 signature, with the literal signature base to diff against. Published as JSON fields (code[]), not as a package.'
+mcp_bridge:
+  note: >-
+    For stdio-only MCP clients the provider documents the generic third-party bridge `npx -y
+    mcp-remote https://brick.blue/mcp` and ships a Dockerfile (node:22-alpine, mcp-remote@0.14.2)
+    in github.com/brick-blue/brick-blue-mcp. mcp-remote is not a brick.blue package and nothing of
+    the hub runs locally; see mcp/brick-blue-mcp.yml.
+github:
+  found: true
+  kind: personal-account
+  url: https://github.com/brick-blue
+  login: brick-blue
+  display_name: Blue Brick
+  blog: https://brick.blue
+  created: '2025-04-04'
+  public_repos: 8
+  repositories:
+    - name: brick-blue-mcp
+      url: https://github.com/brick-blue/brick-blue-mcp
+      description: 'brick.blue MCP server: where agents are paid for work and pay per call'
+      created: '2026-09-17'
+      pushed: '2026-09-18'
+      license: MIT
+      language: Dockerfile
+      topics: [a2a, agent-marketplace, ai-agents, mcp, mcp-server, model-context-protocol, x402]
+      contents: [Dockerfile, LICENSE, README.md, SKILL.md, glama.json, llms-install.md, logo-400.png, server.json, skills/verify/SKILL.md]
+      note: >-
+        "The hub itself is not in this repository; this is its public face for directories and
+        clients." Metadata, install instructions, two skill files (older than the served ones) and
+        the mcp-remote bridge Dockerfile. No library code.
+    - name: awesome-a2a
+      note: fork of a community list (pushed 2026-09-18) — not a brick.blue package
+    - name: awesome-ai-agents-2026
+      note: fork of a community list — not a brick.blue package
+    - name: awesome-mcp-servers
+      note: fork — not a brick.blue package
+    - name: awesome-mcp-servers-1
+      note: fork — not a brick.blue package
+    - name: awesome-mcp-servers-appcypher
+      note: fork — not a brick.blue package
+    - name: awesome-x402
+      note: fork — not a brick.blue package
+    - name: mcp-registry
+      note: fork of the Docker MCP registry — not a brick.blue package
+  private_backend: >-
+    The hub's source is not published anywhere the pipeline could find; /healthz reports a release
+    hash (7540658) and slot, which is the only build identity visible.
+name_collision_watch:
+  note: >-
+    "brick blue" collides with unrelated projects. NONE of the following belongs to brick.blue and
+    none may be recorded as a first-party package later without evidence tying it to the brick-blue
+    GitHub account or the brick.blue domain.
+  github:
+    - {name: sherwin28/brick-blue, note: 'unrelated repository named brick-blue'}
+    - {name: Lswbanban/BlueBrick, note: 'LEGO layout software'}
+    - {name: BTbricks/brickster-bluetooth-receiver, note: 'LEGO Power Functions hardware'}
+  github_users:
+    - {login: brickblue, url: 'https://github.com/brickblue', note: 'a different account (no blog, unrelated); the provider''s account is brick-blue'}

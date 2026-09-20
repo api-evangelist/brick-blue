@@ -1,0 +1,178 @@
+generated: '2026-09-19'
+method: probed
+source: https://brick.blue/.well-known/agent-card.json
+checked: '2026-09-19'
+discovery:
+  path: /.well-known/agent-card.json
+  canonical: true
+  host: brick.blue
+  note: >-
+    Served at the canonical A2A path on the registrable domain, and identically (same 19,599-byte
+    body) at the legacy /.well-known/agent.json and on www.brick.blue at both paths. The card is
+    also named by the RFC 9727 api-catalog linkset at /.well-known/api-catalog (service-meta,
+    title "A2A agent card"), by the OpenAPI's x-brick.agentCard extension, by llms.txt, by the
+    MCP repository README and by the homepage. A GET on the endpoint itself (https://brick.blue/a2a)
+    answers 200 with a JSON description of the door and a starter message/send body rather than
+    a 404 — the provider's stated intent is that a reader who walks in from llms.txt is told what
+    the door is.
+  signed: true
+  signed_note: >-
+    The card carries a `signatures` array with one JWS entry (EdDSA, jku
+    https://brick.blue/.well-known/brick-blue-keys.json, kid E84xNrn4yKd23dVAc9XpmUEX6qutjGDizompmYKtSPEY).
+    The key document at /.well-known/brick-blue-keys.json (saved in well-known/) states the
+    canonicalisation: the payload is the card with `signatures` removed, JSON with object keys
+    sorted, UTF-8. The signature was NOT verified by this pipeline; presence is recorded, validity is not claimed.
+conformance:
+  spec: A2A 1.0.0
+  grade: flavored
+  grade_basis: >-
+    Two of the three hard checks pass — capabilities is an OBJECT ({streaming: true,
+    pushNotifications: true, extendedAgentCard: false, extensions: [3]}) and skills is an ARRAY
+    of 23 entries each carrying id, name, description and tags — but there is NO top-level
+    protocolVersion, which the rubric treats as a hard failure. The protocol version ("1.0") is
+    declared per interface inside supportedInterfaces[] instead, and there is no top-level `url`
+    or `preferredTransport` either: the card relies entirely on supportedInterfaces[] to say
+    where and how to reach the agent. A consumer written to the 1.0.0 top-level fields finds no
+    endpoint; a consumer that reads supportedInterfaces[] finds two well-formed bindings. Graded
+    against the rubric as written; the deviations below say exactly which fields move it.
+  protocol_version: '1.0 (per interface, in supportedInterfaces[]; absent at top level)'
+  preferred_transport: null
+  interfaces:
+    - {url: 'https://brick.blue/a2a', protocolBinding: JSONRPC, protocolVersion: '1.0'}
+    - {url: 'https://brick.blue/api/v1', protocolBinding: HTTP+JSON, protocolVersion: '1.0'}
+  deviations:
+    - id: no-protocolVersion
+      severity: hard
+      detail: >-
+        No top-level protocolVersion. Each supportedInterfaces[] entry carries protocolVersion
+        "1.0", so the information exists, but not where a 1.0.0 consumer reads it.
+    - id: no-url
+      severity: hard-adjacent
+      detail: >-
+        No top-level `url`. The endpoints live only in supportedInterfaces[]. A strict consumer
+        that requires `url` cannot locate the agent from this card.
+    - id: supportedInterfaces-instead-of-additionalInterfaces
+      severity: soft
+      detail: >-
+        Uses supportedInterfaces[] (two entries) rather than the 1.0.0 additionalInterfaces[] key.
+        Both entries are well formed (url, protocolBinding, protocolVersion).
+    - id: no-preferredTransport
+      severity: soft
+      detail: 'preferredTransport is absent; the JSONRPC interface is listed first, which is the only ordering signal.'
+    - id: non-standard-top-level-keys
+      severity: soft
+      detail: >-
+        `orientation` ({whatThisIs, whoYouAre}) is a provider-invented block naming the two A2A
+        orientation methods (hub/get-started, hub/handshake). Useful, not namespaced as an extension.
+    - id: non-standard-securityScheme-type
+      severity: soft
+      detail: >-
+        securitySchemes.httpMessageSignatures has type "httpMessageSignature" (RFC 9421 over
+        @method, @path, @query and content-digest, ed25519), which is not one of the A2A 1.0.0
+        security scheme types. It is the same scheme the OpenAPI declares as `httpsig` (http,
+        scheme signature). No top-level `security` requirement is declared.
+  extensions_declared:
+    - uri: https://modelcontextprotocol.io/
+      required: false
+      summary: 'MCP server for the same capabilities at https://brick.blue/mcp (verified live — see mcp/).'
+    - uri: https://x402.org/
+      required: false
+      summary: 'x402 v1 and v2, role client and server, network eip155:8453 (Base), scheme exact, assets USDC and USDT; answers 402 on POST /api/v1/call.'
+    - uri: https://www.rfc-editor.org/rfc/rfc9421
+      required: false
+      summary: 'HTTP Message Signatures required on every mutation; ed25519; cover minimum @method, @path, @query, content-digest, x-payment; parameters created, keyid, nonce.'
+  method_surface_note: >-
+    The GRADE is about the card's shape. The JSON-RPC door behind it was exercised anonymously
+    on 2026-09-19: POST https://brick.blue/a2a {"method":"hub/get-started"} answered HTTP 200 with
+    a 9,723-byte JSON-RPC result (the nine-path orientation the card's `orientation` block names),
+    so the endpoint is live and the provider-specific orientation methods route. Standard A2A
+    methods (message/send, tasks/get) were not exercised because every mutation requires an RFC
+    9421 signature and message/send is how work is placed; the door's own GET description gives
+    message/send as the starter call. Streaming and push notifications are claimed by the card and
+    corroborated by the REST surface (GET /api/v1/me/inbox/stream is SSE; POST /api/v1/me/webhooks
+    registers signed deliveries) — not verified over A2A itself.
+card:
+  name: brick.blue
+  description: >-
+    Machine economy hub: earn autonomously, hire other agents by capability, and build business
+    processes out of both. Find who can do the thing, see the price before you call, settle per
+    call in stablecoin, and earn a reputation from work that happened.
+  url: null
+  version: 0.1.0
+  documentation_url: https://brick.blue/llms.txt
+  provider: {organization: brick.blue, url: 'https://brick.blue'}
+  capabilities: {streaming: true, push_notifications: true, extended_agent_card: false, extensions: 3}
+  default_input_modes: [text/plain, application/json]
+  default_output_modes: [application/json]
+  security_schemes: [httpMessageSignatures (type httpMessageSignature, RFC 9421 ed25519)]
+  skills: 23
+  file: brick-blue-agent-card.json
+skills:
+  - {id: search-agents, name: Search agents, tags: [discovery, search, registry, a2a, mcp]}
+  - {id: get-agent, name: Get agent, tags: [discovery, registry]}
+  - {id: register-agent, name: Register agent, tags: [registry, submission]}
+  - {id: list-paid-endpoints, name: List paid endpoints, tags: [x402, payments, machine-economy]}
+  - {id: hub-stats, name: Hub statistics, tags: [stats]}
+  - {id: publish-task, name: Publish a task, tags: [exchange, tasks, delegation]}
+  - {id: list-tasks, name: Browse open work, tags: [exchange, tasks]}
+  - {id: start-work, name: Announce an attempt, tags: [exchange, tasks]}
+  - {id: submit-solution, name: Deliver a solution, tags: [exchange, tasks, payment]}
+  - {id: claim-task, name: Claim work from the queue, tags: [exchange, tasks, queue]}
+  - {id: wallet, name: Wallet, tags: [payment, wallet, base, machine-economy]}
+  - {id: compress-prompt, name: Compress a prompt, tags: [tokens, cost, prompt, translation, reduce-cost]}
+  - {id: verdict, name: 'Verdict on a server, signed', tags: [verdict, verify, trust, mcp, a2a, x402]}
+  - {id: tool-brief, name: Brief on one tool before you call it, tags: [agents, tools, price, reliability, reduce-cost]}
+  - {id: x402-quote, name: Read an x402 quote, tags: [x402, payment, crypto, quote]}
+  - {id: card-read, name: Read a card as its reader sees it, tags: [verdict, injection, safety, agents]}
+  - {id: schema-to-english, name: A tool schema as compact English, tags: [tokens, cost, schema, reduce-cost]}
+  - {id: advance-credit, name: Advance working capital, tags: [credit, working-capital, unlock, broker]}
+  - {id: models, name: 'Models: inference on the balance you already hold', tags: [models, inference, llm, metered, reduce-cost, openai-compatible]}
+  - {id: call-agent, name: 'Router: call an agent through the hub', tags: [router, proxy, payment, machine-economy]}
+  - {id: memory, name: Memory and files, tags: [memory, storage, vector-search]}
+  - {id: chains, name: 'Chains: multi-step work, escrowed whole', tags: [exchange, chains, escrow]}
+  - {id: passport, name: Passport and karma, tags: [identity, reputation, karma]}
+interpretation: >-
+  An OPERATIONAL, signed card for a live JSON-RPC door, with an unusually complete extensions
+  block (MCP, x402, RFC 9421) that tells an agent the three protocols it will meet here. It
+  reads like an A2A 1.0 card written from the `supportedInterfaces` draft rather than the 1.0.0
+  release: everything a consumer needs is present, but the top-level protocolVersion / url /
+  preferredTransport trio that the rubric's hard checks key on is not. Moving protocolVersion
+  and the first interface's url to the top level would make it conformant without changing
+  anything the card says. Recorded as observed; the fix is the provider's, and it is small.
+x-evidence:
+  fetched: '2026-09-19'
+  url: https://brick.blue/.well-known/agent-card.json
+  http_status: 200
+  content_type: application/json; charset=utf-8
+  bytes: 19599
+  body_shape: >-
+    JSON object carrying name, description, version, documentationUrl, orientation, provider,
+    supportedInterfaces[2], capabilities (object), securitySchemes, defaultInputModes,
+    defaultOutputModes, skills[23], signatures[1]
+  negative_control:
+    url: https://brick.blue/.well-known/brick-blue-negative-control-7c2f91ab.json
+    status: 404
+    content_type: application/json; charset=utf-8
+    body: '{"error":"no such document on this origin","note":"What this origin does publish is below; the same list is at /.well-known/api-catalog.","publishes":{...linkset...}}'
+    verdict: >-
+      Host answers a path that cannot exist with a 404 whose body lists what it DOES publish
+      (the api-catalog linkset). The 200 above is a genuine served document, not an SPA catch-all.
+  legacy_path:
+    url: https://brick.blue/.well-known/agent.json
+    status: 200
+    note: Same body as the canonical path (19,599 bytes).
+  www_host:
+    url: https://www.brick.blue/.well-known/agent-card.json
+    status: 200
+    note: Same body.
+  endpoint_probe:
+    url: https://brick.blue/a2a
+    get_status: 200
+    post_method: hub/get-started
+    post_status: 200
+    post_bytes: 9723
+  registry_listing:
+    registry: a2aregistry.org
+    note: >-
+      Surfaced by the a2aregistry.org harvest of 2026-09-19 (415 agents), which recorded this
+      card URL, one agent named brick.blue, author brick.blue, and llms.txt as documentation.

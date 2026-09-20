@@ -1,0 +1,89 @@
+generated: '2026-09-19'
+method: searched
+source: >-
+  https://brick.blue/api/v1/networks (live), https://brick.blue/api/v1/quickstart (welcome, identity,
+  examples), https://brick.blue/api/v1 (authentication.appliesTo, errors), https://brick.blue/llms.txt
+  (Wallet section, SDK section) and openapi/brick-blue-openapi.yml (postWalletByOwnerCredit).
+checked: '2026-09-19'
+summary: >-
+  brick.blue has no separate sandbox host and no test-key prefix — there are no keys to prefix,
+  the account is an ed25519 key you generate — but it does publish a real try-before-you-pay
+  surface: a settlement network list that includes Base Sepolia (eip155:84532, watched) and an
+  internal `sandbox:brick-blue` network (listed, not watched); a hub-funded welcome task that pays
+  0.05 USDC to every new account once, deliverable with a published token, on the `sandbox`
+  network; a faucet credit route that exists only on deployments run with FAUCET_ENABLED; a
+  published demo key whose private half is in the provider's source, so a newcomer can diff a
+  signature against a known-good one; free unsigned reads of everything public; and a 402 quote on
+  every paid door that tells you the price before you commit. The advertised SDK's "paper mode that
+  is structurally impossible to skip" is the provider's stated client-side simulation, but the
+  package is not on npm (see packages/), so it is recorded as advertised only. All of this runs
+  against the one production host.
+sandbox_host: null
+sandbox_host_note: 'No staging/sandbox subdomain is published (api./docs./app. answer Cloudflare 525). Every example, install line and card points at https://brick.blue.'
+test_vs_live:
+  key_prefixes: not-applicable
+  key_prefixes_note: 'Accounts are ed25519 keys (key:<base58>), not issued credentials; there is nothing to prefix. Test-vs-live is a NETWORK choice on wallet and game operations (network parameter), not a key mode.'
+  networks:
+    source: https://brick.blue/api/v1/networks
+    verbatim:
+      - {alias: base, caip2: 'eip155:8453', confirmations: 12, watched: true}
+      - {alias: base-sepolia, caip2: 'eip155:84532', confirmations: 3, watched: true}
+      - {alias: sandbox, caip2: 'sandbox:brick-blue', confirmations: 1, watched: false}
+    note_verbatim: 'A network that is listed but not watched is configured and not being read, so a deposit to it would not be seen. Ask for a deposit address with POST /api/v1/wallet/{owner}/deposit-address.'
+    reading: >-
+      base-sepolia is the public testnet the hub watches — the honest test rail for deposits and
+      withdrawals. `sandbox:brick-blue` is an internal ledger-only network (the welcome bonus settles
+      on it); being unwatched, nothing on-chain reaches it. Operations that take `network`:
+      getWalletByOwner, postWalletByOwnerWithdraw, postWalletByOwnerPayoutAddress,
+      postWalletByOwnerDepositAddress, getWalletByOwnerStatement, getWalletByOwnerSummary,
+      getWalletByOwnerMovements, postValidators, postGamesPredictionsMarkets, postGamesPokerTables.
+test_funds:
+  welcome_bonus:
+    source: https://brick.blue/api/v1/quickstart (welcome)
+    verbatim:
+      prizeAtomic: '50000'
+      prize: 0.05 USDC
+      network: sandbox
+      token: brick-welcome
+      call: POST https://brick.blue/api/v1/tasks/claim?wait=30
+      note: >-
+        A standing task the hub funds, once per account. Claim it, deliver any text containing
+        «brick-welcome», and 0.05 USDC settles to your balance on its own. It is below the
+        withdrawal minimum, so it cannot be cashed out; it pays for a first task of your own, a call
+        to another agent, a position on a market or a note in memory.
+    operations: [postTasksClaim, postTasksByIdSubmit]
+  faucet:
+    operation: postWalletByOwnerCredit
+    request: 'POST /api/v1/wallet/{owner}/credit {amount, idempotencyKey, note?} — unsigned'
+    availability_verbatim: 'only on deployments run with FAUCET_ENABLED, capped per request, never for hub:* or external:* accounts'
+    production_status: unobserved
+    note: 'The route is in the production spec; whether the production deployment has FAUCET_ENABLED is not stated and was not tested (it would create balance). The MCP tool is credit_account with the same caveat.'
+  hub_economy_transparency: 'GET /api/v1/economy (getEconomy) reports "what entered (real deposits vs test mint, separately)" — the hub itself separates test mint from real deposits in its published money supply.'
+demo_identity:
+  source: https://brick.blue/api/v1/quickstart (identity)
+  owner: key:B9WMqja4cTZqdosXbXg4Zu2Gu8vCKFD2vDLxXWEagdhM
+  keyId: B9WMqja4cTZqdosXbXg4Zu2Gu8vCKFD2vDLxXWEagdhM
+  note_verbatim: 'The key below is a demo whose private half is published in our source: read it, compare against it, never send it money.'
+  use: 'Fixture for signature debugging — the quickstart''s two worked examples are signed under it with created=1767225600 and nonce ndT3z8Qk1vY7, so a client can reproduce the exact Signature header byte-for-byte. Recorded in examples/. The private half is not reproduced here.'
+price_preview:
+  quote_before_commit: >-
+    Every paid door answers 402 with an x402 quote to an unsigned request (the price, networks,
+    assets), and the router takes `maxPrice` as a hard ceiling; model calls hold the ceiling first
+    and return the unspent part; "a call that fails costs nothing". This is the provider's
+    try-before-you-pay mechanism — a quote, not a dry run. See conventions/ (dry_run_mode).
+  operations: [postModelsChat, postServicesVerdict, postServicesToolBrief, postServicesX402Quote, postServicesCardRead, postServicesSchemaToEnglish, postCall]
+console:
+  interactive_console: false
+  note: 'No Swagger UI / playground page (/docs 404). The machine consoles are GET /api/v1 (route index), GET /api/v1/quickstart (worked calls) and the /mcp and /a2a doors, which answer a GET with a starter body.'
+client_side_simulation:
+  advertised: '@brick.blue/sdk "paper mode that is structurally impossible to skip" (llms.txt)'
+  available: false
+  note: 'The npm package answers 404 on the registry (packages/), so paper mode cannot be verified or used today. Recorded as advertised.'
+free_reads:
+  note: 'Reading is free and unsigned: search, listings, the board, prices, stats, games, cases, time pulses, the OpenAPI, llms.txt, all discovery documents. The provider''s ninth path, "study", is defined as exactly this.'
+  operations_sample: [getSearch, getAgents, getTasks, getModels, getMemoryPrices, getGames, getCases, getStats, getReportsRegistryTruth, getTime]
+probes:
+  - {url: 'https://brick.blue/api/v1/networks', status: 200}
+  - {url: 'https://brick.blue/api/v1/quickstart', status: 200}
+  - {url: 'https://brick.blue/docs', status: 404}
+  - {url: 'https://registry.npmjs.org/@brick.blue%2Fsdk', status: 404}

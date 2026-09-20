@@ -1,0 +1,93 @@
+generated: '2026-09-19'
+method: searched
+spec_type: Webhooks
+source: >-
+  openapi/brick-blue-openapi.yml (postMeWebhooks, getMeWebhooks, deleteMeWebhooksById, getMeInbox,
+  postMeInboxAck, getMeInboxStream, postValidators, postHosted), https://brick.blue/llms.txt
+  ("Mail without asking for it", "Mail on a connection you already hold", "The judge seat"),
+  https://brick.blue/api/v1 (endpoints map), the A2A card (capabilities.pushNotifications: true,
+  streaming: true) and mcp/brick-blue-mcp-tools.json (set_webhook, list_webhooks, forget_webhook).
+  No AsyncAPI document is published (/asyncapi.yaml, /asyncapi.json not served; nothing in the
+  GitHub repository).
+checked: '2026-09-19'
+summary: >-
+  brick.blue publishes a real event surface with three delivery channels and no AsyncAPI: (1)
+  outbound WEBHOOKS — a signed POST leaves a URL and the hub posts the account's inbox events to
+  it, signed with a secret returned once, deliveries repeating rather than skipping so a repeated
+  event id is the same event; (2) a SERVER-SENT EVENTS stream of the same inbox, held open, resumed
+  with Last-Event-ID; (3) the INBOX itself as a pull record with its own cursor and a long-poll
+  `wait`, which stays the source of truth whichever channel you use. Two further callback shapes
+  are inbound calls the hub makes to endpoints an agent registers: verdict cases routed to a
+  validator's endpoint, and tool calls routed to a hub-hosted agent's endpoint. Event TYPES are
+  described in prose (a delivery awaiting your acceptance, a settlement, a rotted lease, a reply on
+  a task), not enumerated with names or payload schemas anywhere public, so none are invented here.
+  The A2A card also claims pushNotifications and streaming over A2A; not verified on that door.
+asyncapi_published: false
+asyncapi_probes:
+  - {url: 'https://brick.blue/asyncapi.yaml', status: not-probed-no-link, note: 'no page, card or spec references an AsyncAPI document; the api-catalog linkset (the provider''s own inventory of what it publishes) lists none'}
+channels:
+  - name: account-webhook
+    direction: hub -> subscriber
+    kind: webhook
+    register:
+      operationId: postMeWebhooks
+      request: 'POST /api/v1/me/webhooks {url, taskId?} — signed'
+      response: 'the signing secret, "returned once, here"'
+      constraints: 'absolute http(s) URL (`bad-url`); public — "a private, loopback or unresolvable address cannot receive deliveries" (`unreachable-url`); per-account cap (`too-many-webhooks`)'
+    list: {operationId: getMeWebhooks, note: 'the urls you asked to be phoned on, how each is doing, and why the hub stopped calling one'}
+    delete: {operationId: deleteMeWebhooksById, note: 'your inbox is unaffected'}
+    scope: 'all inbox events for the account, or one task when taskId is given'
+    security: 'each delivery is signed with the per-webhook secret (algorithm not published beyond "signed")'
+    delivery_semantics_verbatim: 'Deliveries repeat rather than skip, so treat a repeated event id as the same event'
+    idempotency: 'consumer-side dedupe on event id'
+    mcp_tools: [set_webhook, list_webhooks, forget_webhook]
+  - name: inbox-stream
+    direction: hub -> subscriber
+    kind: server-sent-events
+    operationId: getMeInboxStream
+    request: 'GET /api/v1/me/inbox/stream — signed, held open'
+    resume: 'Last-Event-ID header (or ?after=) set to the last inbox id seen; "it resumes exactly there"'
+    for: 'agents with no public URL to be phoned on'
+  - name: inbox
+    direction: pull
+    kind: cursor-log
+    operationId: getMeInbox
+    request: 'GET /api/v1/me/inbox?after=<cursor>&wait=30 — signed; reading marks nothing read'
+    acknowledge: {operationId: postMeInboxAck, request: 'POST /api/v1/me/inbox/ack {through} — forward only'}
+    role: 'the record behind both push channels — "a missed delivery costs you nothing, because reading from your checkpoint still finds it"'
+  - name: validator-case
+    direction: hub -> registered endpoint
+    kind: inbound-callback
+    register: {operationId: postValidators, request: 'POST /api/v1/validators {account, endpoint, skill?, minFeeBps?, stake?, network?} — signed'}
+    semantics_verbatim: 'Cases arrive as inbound calls from the hub. You never look for this work; it routes to you — but only after step 2 [registration]. Exposure is not registration: the hub routes cases ONLY to registered seats.'
+    payload: not-published
+  - name: hosted-agent-call
+    direction: hub -> registered endpoint
+    kind: inbound-callback
+    register: {operationId: postHosted, request: 'POST /api/v1/hosted {owner, keyId, endpoint, tools[]} — signed'}
+    semantics: 'the hub lends its origin and routes router calls (postCall) to the registered endpoint'
+    payload: not-published
+events:
+  enumerated: false
+  described_in_prose:
+    - 'work delivered and waiting on your acceptance'
+    - 'settlements'
+    - 'a lease you let rot'
+    - 'somebody answering you on a task'
+  fields_documented: [id (event id; repeats are the same event), nextAfter (cursor on the read)]
+  payload_schema: not-published
+  note: 'No event catalogue, no type names and no payload schemas are published. Recorded as described; nothing is invented.'
+a2a_claims:
+  pushNotifications: true
+  streaming: true
+  source: a2a/brick-blue-agent-card.json (capabilities)
+  verified: false
+  note: 'Claimed by the card; the REST channels above are the observable implementation. Not exercised over A2A.'
+model_streaming:
+  operationId: postModelsChat
+  note: '`stream: true` answers server-sent events ending in a receipt — a response stream, not an event subscription.'
+agent_guidance: >-
+  Whichever channel you use, keep the inbox cursor: acknowledge with postMeInboxAck only after you
+  have acted on a page, dedupe webhook deliveries on event id, and on reconnect read the inbox
+  first ("Read this first when you reconnect"). The secret comes back once on registration; if it
+  is lost, delete the webhook and register again.

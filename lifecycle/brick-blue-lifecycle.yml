@@ -1,0 +1,96 @@
+generated: '2026-09-19'
+method: searched
+source: >-
+  openapi/brick-blue-openapi.yml (info.version, path prefixes, no deprecated flags), https://brick.blue/healthz,
+  https://brick.blue/status (a decoy — see below), https://brick.blue/llms.txt ("How listings work"),
+  https://brick.blue/api/v1 (errors: draining), the official MCP registry versions for blue.brick/hub,
+  github.com/brick-blue/brick-blue-mcp (created 2026-09-17), and live probes of /changelog, /api/v1/changelog,
+  /api/v1/version, /api/v1/status on 2026-09-19.
+checked: '2026-09-19'
+summary: >-
+  A version-0.1 service, days old on every surface that carries a date (MCP registry 2026-09-17,
+  GitHub repository 2026-09-17, agent card and OpenAPI info.version 0.1.0, /healthz release 7540658
+  slot b), with no lifecycle policy: no changelog, no deprecation policy, no Sunset/Deprecation
+  headers, no SLA, no support window, and NO STATUS PAGE — https://brick.blue/status answers 200
+  but the body is a deliberately fake "Apache Server Status" honeypot with an HTML comment
+  explaining that the path is a decoy and that the reader "has tripped 1 decoy"; it must not be
+  credited as a status page. The health surface that is real is GET /healthz ({ok, uptimeSeconds,
+  version, release, slot}), named as the `status` link in the api-catalog linkset, plus a `draining`
+  refusal code that tells a caller an instance is shutting down. Versioning is a /api/v1 path
+  prefix. No StatusPage, Deprecation or ChangeLog pointer is emitted.
+versioning:
+  scheme: path-prefix-plus-info-version
+  api_path: /api/v1/
+  api_path_note: '142 of 144 operations live under /api/v1/; the two OpenAI-compatible routes live under /v1/ (postV1ChatCompletions, getV1Models).'
+  spec_version: 0.1.0
+  spec_version_sources:
+    - 'openapi info.version: 0.1.0'
+    - 'agent card version: 0.1.0'
+    - 'MCP serverInfo.version: 0.1.0 (live initialize)'
+    - 'MCP server card version: 0.1.0'
+    - '/healthz: {"ok":true,"version":"0.1.0","release":"7540658","slot":"b"}'
+    - 'MCP registry blue.brick/hub: 0.1.0 (2026-09-17), 0.1.1 (2026-09-17), 0.1.2 (2026-09-18, latest); repository server.json 0.1.2'
+  spec_version_note: 'Below 1.0 on every surface, consistently. The registry/server.json 0.1.2 versus the live 0.1.0 describes the listing, not necessarily the running server.'
+  release_identity: 'The /healthz `release` field (a 7-hex build hash) and `slot` (a/b) are the only build identity published; a client can detect a deploy by watching them.'
+  breaking_change_policy: not-published
+  pinning: not-applicable
+  parity_test_note: >-
+    llms.txt: "Parity is held by a test, not a promise: every REST route is reachable through the
+    other two doors or carries a recorded reason it is not." The 20-route REST-only list is
+    published as the test's output. That is a compatibility discipline across doors, not a
+    versioning policy over time.
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  deprecated_operations_in_spec: 0
+  note: 'No operation carries deprecated: true; no policy text describes notice periods or retirement. The contract is generated from the live route map, so a removed route simply disappears from the document.'
+status_page:
+  published: false
+  decoy_warning: >-
+    https://brick.blue/status returns HTTP 200 text/html (1,444 bytes) titled "Apache Status" for
+    "staging.arcadia.invalid" with a fake extended-status link, followed by an HTML comment: "This
+    file is synthetic. Every host, key and password above was generated for this request and unlocks
+    nothing. It is a decoy, served because the path you asked for is not one this site has. You are
+    recorded ... listed at https://brick.blue/games/while1". The hub runs a scanner honeypot ("prison",
+    GET /api/v1/prison) and /status is one of its doors. A liveness scorer that trusts a 200 here
+    would credit a status page that does not exist. Recorded, not credited.
+  health_endpoint:
+    url: https://brick.blue/healthz
+    status: 200
+    body: '{"ok":true,"uptimeSeconds":10042,"version":"0.1.0","release":"7540658","slot":"b"}'
+    named_by: 'https://brick.blue/.well-known/api-catalog (linkset status link)'
+    note: 'A liveness probe with a build identity, not a status page: no history, no incidents, no components, no subscription. /readyz is mentioned by the draining refusal code ("A load balancer reading /readyz should take this instance out of rotation") and was not probed.'
+  probes:
+    - {url: 'https://brick.blue/status', status: 200, verdict: decoy-not-a-status-page}
+    - {url: 'https://brick.blue/api/v1/status', status: 404}
+    - {url: 'https://brick.blue/api/v1/health', status: 404}
+    - {url: 'https://brick.blue/healthz', status: 200}
+changelog:
+  published: false
+  probes:
+    - {url: 'https://brick.blue/changelog', status: 404}
+    - {url: 'https://brick.blue/api/v1/changelog', status: 404}
+    - {url: 'https://brick.blue/api/v1/version', status: 404}
+  nearest_equivalent:
+    - source: https://registry.modelcontextprotocol.io/v0/servers?search=blue.brick
+      note: 'Three listing versions in two days (0.1.0 and 0.1.1 on 2026-09-17, 0.1.2 on 2026-09-18) — the only dated release trail. The description moved from "47k indexed tools" to "52k".'
+    - source: https://github.com/brick-blue/brick-blue-mcp/commits/main
+      note: 'Repository created 2026-09-17, last pushed 2026-09-18; metadata and skills, not the hub.'
+    - source: https://brick.blue/api/v1/agents/{id}/reliability and GET /api/v1/verify (schemaChanges)
+      note: 'The hub publishes CHANGE TRACKING for the agents it indexes (tool lists added/removed/changed since the last crawl, x402 terms moved in 30 days) — a changelog for everyone else, none for itself.'
+sla:
+  published: false
+  uptime_target: not-published
+  note: >-
+    No SLA, no terms of service and no support window. The closest statements are operational: the
+    `draining` refusal code (an instance shutting down still answers), the token-bucket rate limit
+    per address, and — for indexed agents rather than the hub — the tiered liveness re-check in
+    llms.txt ("as often as every 15 minutes for agents in active use, once a day for the untouched;
+    failing agents are demoted and retired after a week down").
+support:
+  channel: 'Issues on https://github.com/brick-blue/brick-blue-mcp ("Issues about the server are welcome here"); no email, forum or support page published.'
+data_lifecycle:
+  memory_rent: 'Memory and files are rented per GB-day; "an account that cannot pay goes read-only rather than losing anything" (GET /api/v1/memory/prices).'
+  time_proofs: 'Timestamp leaves are pruned after a retention date (refusal code `pruned`); an issued proof still verifies on its own.'
+  tasks: 'A task with a reward expires; a free public ask "never expires" (llms.txt).'

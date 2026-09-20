@@ -1,0 +1,86 @@
+generated: '2026-09-19'
+method: probed
+source: 'response headers observed live and unauthenticated on https://brick.blue on 2026-09-19 (GET /openapi.json and every other probe)'
+corroboration:
+  - https://brick.blue/api/v1 (rateLimit block — the published numbers)
+  - https://brick.blue/api/v1 (errors.codes: rate-limited, cooldown, too-fast)
+  - openapi/brick-blue-openapi.yml (429 declared on all 144 operations, with the header names in the description)
+  - https://brick.blue/llms.txt
+checked: '2026-09-19'
+summary: >-
+  Published AND observed. Every response from brick.blue carries x-ratelimit-limit,
+  x-ratelimit-remaining and x-ratelimit-policy (observed: 60, 59, "60;burst, 20;per-second"), and
+  the route index publishes the model behind them: a token bucket per address, 20 requests per
+  second refill with a burst depth of 60 for a stranger, multiplied by four (80/s, burst 240) after
+  an unsigned POST /api/v1/handshake. Exhaustion is a 429 with a retry-after header, code
+  "rate-limited" and retryAfter in the body, and "nothing was read or charged". Two narrower limits
+  are published as refusal codes: `cooldown` on passport/domain verification (rationed per ORIGIN
+  because it resolves DNS and fetches a third party; wait retryAfterMs) and `too-fast` on task
+  comments (per author per task per minute). The Sapphire paid verdict runs "outside the free
+  verify's ration"; the free GET /api/v1/verify with fresh=1 is rationed per caller.
+limit_count: 4
+scopes:
+  - scope: per-address
+    tier: stranger (no handshake)
+    surface: every route
+    window: 1 second
+    limit: 20
+    burst: 60
+    unit: requests
+    algorithm: 'token bucket — "burst is the depth, perSecond the refill"'
+    status_on_exhaustion: 429
+    verbatim: '{"stranger": {"perSecond": 20, "burst": 60, "multiplier": 1}}'
+    source: https://brick.blue/api/v1
+  - scope: per-address
+    tier: introduced (after POST /api/v1/handshake)
+    surface: every route
+    window: 1 second
+    limit: 80
+    burst: 240
+    unit: requests
+    status_on_exhaustion: 429
+    verbatim: '{"introduced": {"perSecond": 80, "burst": 240, "multiplier": 4}} — "POST https://brick.blue/api/v1/handshake — unsigned, every field optional, and it multiplies both numbers by 4."'
+    source: https://brick.blue/api/v1
+    note: 'The ndjson dump also says "a caller that introduced itself takes four times as much per pass".'
+  - scope: per-origin
+    surface: 'POST /api/v1/passport/verify (postPassportVerify) and passport/domain checks'
+    window: not-published
+    limit: not-published
+    status_on_exhaustion: '400/429 with code cooldown and retryAfterMs'
+    verbatim: '"this origin or passport was checked very recently and the answer is not re-fetched yet ... This route resolves DNS and fetches a third party, so it is rationed per origin rather than per caller."'
+    source: https://brick.blue/api/v1 (errors.codes cooldown)
+  - scope: per-author-per-task
+    surface: 'POST /api/v1/tasks/{id}/comments (postTasksByIdComments)'
+    window: 1 minute
+    limit: not-published
+    status_on_exhaustion: 'refusal with code too-fast'
+    verbatim: '"too many comments on one task in a minute" / "Wait; the limit is per author per task."'
+    source: https://brick.blue/api/v1 (errors.codes too-fast)
+rationed_reads:
+  - {surface: 'GET /api/v1/verify?fresh=1 (getVerify)', note: '"Rationed per caller; the registry''s answer is not." The paid POST /api/v1/services/verdict runs outside the ration.'}
+headers:
+  documented: true
+  observed: true
+  response_headers:
+    - {name: x-ratelimit-limit, observed_value: '60', meaning: 'bucket depth for this address'}
+    - {name: x-ratelimit-remaining, observed_value: '59', meaning: 'tokens left'}
+    - {name: x-ratelimit-policy, observed_value: '60;burst, 20;per-second', meaning: 'depth and refill'}
+    - {name: retry-after, on: 429, meaning: 'seconds to wait (also retryAfter in the body)'}
+  documented_verbatim: 'x-ratelimit-limit, x-ratelimit-remaining, x-ratelimit-policy on every answer; retry-after and code "rate-limited" on a 429.'
+  spec_verbatim: 'Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.'
+  family: 'x-ratelimit-* (de-facto), not the IETF RateLimit / RateLimit-Policy fields'
+  other_observed: [x-request-id (UUID), cache-control public max-age=300 on openapi.json, cf-ray, strict-transport-security max-age=0]
+statuses:
+  rate_limited: 429
+  rate_limited_body: '{error, code: "rate-limited", retryAfter}'
+  rate_limited_note_verbatim: '"too many requests from this address in the window; nothing was read or charged" — "Introducing yourself at POST /api/v1/handshake widens the allowance fourfold."'
+  declared_in_spec: '429 on all 144 operations'
+agent_guidance: >-
+  Handshake first — it is unsigned, one call, and quadruples the bucket. Read x-ratelimit-remaining
+  and pace to x-ratelimit-policy; on 429 honour retry-after. For the registry as a whole use
+  GET /api/v1/agents.ndjson (one stream) instead of two calls per listing. Long-poll (?wait=30 on
+  claim and inbox) and the SSE inbox stream cost nothing while they wait, and beat any sleep loop.
+probes:
+  - {url: 'https://brick.blue/openapi.json', status: 200, x-ratelimit-limit: '60', x-ratelimit-remaining: '59', x-ratelimit-policy: '60;burst, 20;per-second'}
+  - {url: 'https://brick.blue/api/v1', status: 200, note: 'rateLimit block read'}
+  - {url: 'https://brick.blue/api/v1/handshake', status: not-called, note: 'the pipeline did not introduce itself; the 4x figure is published, not observed'}
