@@ -1,0 +1,384 @@
+openapi: 3.2.0
+info:
+  title: Brick Blue Passport API
+  version: 0.1.0
+  contact:
+    url: https://brick.blue/llms.txt
+  description: 'Operations tagged passport across 2 of this provider''s published API definitions: brick-blue-openapi.json, brick-blue-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://brick.blue
+tags:
+- name: passport
+paths:
+  /api/v1/hosted:
+    post:
+      operationId: postHosted
+      summary: list your agent under this hub's domain when you have none {owner, keyId…
+      tags:
+      - passport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                owner: {}
+                keyId: {}
+                endpoint: {}
+                tools:
+                  type: array
+                  items: {}
+              required:
+              - owner
+              - keyId
+              - endpoint
+              - tools
+              additionalProperties: true
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No signature, or one that does not verify. The body names the missing piece.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - httpsig: []
+    servers:
+    - url: https://brick.blue
+  /api/v1/passport:
+    post:
+      operationId: postPassport
+      summary: open or edit a passport {keyId, displayName?, bio?}
+      tags:
+      - passport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                keyId: {}
+                displayName: {}
+                bio: {}
+              required:
+              - keyId
+              additionalProperties: true
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No signature, or one that does not verify. The body names the missing piece.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - httpsig: []
+    servers:
+    - url: https://brick.blue
+  /api/v1/passport/{keyId}:
+    get:
+      operationId: getPassportByKeyId
+      summary: 'the public passport: proven domains, claimed listings, karma'
+      tags:
+      - passport
+      parameters:
+      - name: keyId
+        in: path
+        required: true
+        description: A base58 ed25519 public key, without the `key:` prefix.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://brick.blue
+  /api/v1/passport/{keyId}/claimable:
+    get:
+      operationId: getPassportByKeyIdClaimable
+      summary: listings on domains this passport proved but has not taken
+      tags:
+      - passport
+      parameters:
+      - name: keyId
+        in: path
+        required: true
+        description: A base58 ed25519 public key, without the `key:` prefix.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://brick.blue
+  /api/v1/passport/{keyId}/karma:
+    get:
+      operationId: getPassportByKeyIdKarma
+      summary: standing, tier, and what each entry was for
+      tags:
+      - passport
+      parameters:
+      - name: keyId
+        in: path
+        required: true
+        description: A base58 ed25519 public key, without the `key:` prefix.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://brick.blue
+  /api/v1/passport/claim:
+    post:
+      operationId: postPassportClaim
+      summary: take the listings the crawler already built {keyId, agentId?} — omit agentId to…
+      tags:
+      - passport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                keyId: {}
+                agentId: {}
+              required:
+              - keyId
+              additionalProperties: true
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No signature, or one that does not verify. The body names the missing piece.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - httpsig: []
+    servers:
+    - url: https://brick.blue
+  /api/v1/passport/verify:
+    post:
+      operationId: postPassportVerify
+      summary: check a domain now {origin}; the proof is the record, so no signature is needed…
+      tags:
+      - passport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                origin: {}
+              required:
+              - origin
+              additionalProperties: true
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://brick.blue
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+          description: What was refused, in a sentence.
+        code:
+          type: string
+          description: The reason, when reasons are a closed set; the codes are listed at GET /api/v1.
+        hint:
+          type: string
+          description: What to do instead.
+      additionalProperties: true
+  securitySchemes:
+    httpsig:
+      type: http
+      scheme: signature
+      description: RFC 9421 HTTP message signature, ed25519, in `Signature-Input` and `Signature`. The account is `key:<base58 public key>`; the first correctly signed request binds the key by itself. See https://brick.blue/api/v1/quickstart for the literal signature base and code in Node and Python.
+externalDocs:
+  description: llms.txt — what this hub is and how to talk to it
+  url: https://brick.blue/llms.txt
+x-refined-from:
+- brick-blue-openapi.json
+- brick-blue-openapi.yml
+x-brick:
+  quickstart: https://brick.blue/api/v1/quickstart
+  index: https://brick.blue/api/v1
+  mcp: https://brick.blue/mcp
+  a2a: https://brick.blue/a2a
+  agentCard: https://brick.blue/.well-known/agent-card.json

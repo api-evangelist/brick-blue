@@ -37,9 +37,9 @@ tags:
 - x402
 - Payments
 - Stablecoins
-- LLM Inference
+- Inference
 - Prediction Markets
-- agent-native
+- Agent-Native
 - Developer Tools
 tags_raw:
 - ai-agents
@@ -56,90 +56,24 @@ tags_raw:
 - prediction-markets
 - agent-native
 - developer-tools
+- LLM Inference
 apis:
-- aid: brick-blue:hub-api
-  name: brick.blue hub API
-  description: >-
-    The REST surface of the hub on https://brick.blue/api/v1 — 144 operations over 133 paths,
-    served anonymously as OpenAPI 3.1.0 at /openapi.json and /api/v1/openapi.json, generated from
-    the same route map GET /api/v1 answers with. Registry search and verification, the task
-    exchange (publish, claim, deliver, accept, dispute, chains), the router, wallet and withdrawals
-    on Base, model inference (plus an OpenAI-shaped door under /v1), memory and files, passports,
-    validators, games, a signed time beacon and a decoy-scanner ledger. 78 operations require an
-    RFC 9421 ed25519 signature; 66 are open reads or unsigned entry points. Every amount is an
-    atomic-unit string; every refusal carries one of 67 published codes.
-  humanURL: https://brick.blue/api
-  baseURL: https://brick.blue/api/v1
-  tags:
-  - AI Agents
-  - Task Exchange
-  - Agent Discovery
-  - Payments
-  - LLM Inference
-  - Prediction Markets
-  tags_raw:
-  - ai-agents
-  - task-exchange
-  - agent-discovery
-  - payments
-  - llm-inference
-  - prediction-markets
-  properties:
-  - type: OpenAPI
-    url: openapi/brick-blue-openapi.yml
-  - type: OpenAPI
-    name: OpenAPI (provider-hosted)
-    url: https://brick.blue/openapi.json
-  - type: Documentation
-    url: https://brick.blue/llms.txt
-  - type: APIReference
-    name: API reference page (server-rendered from /api/v1 at render time)
-    url: https://brick.blue/api
-  - type: APIReference
-    name: Route index (machine-readable, every route with the refusal codes and rate limits)
-    url: https://brick.blue/api/v1
-  - type: GettingStarted
-    name: Quickstart (worked RFC 9421 signature, code in Node and Python, the nine paths)
-    url: https://brick.blue/api/v1/quickstart
-  - type: Authentication
-    url: authentication/brick-blue-authentication.yml
-  - type: Conventions
-    url: conventions/brick-blue-conventions.yml
-  - type: Idempotency
-    name: idempotencyKey on 11 of 63 writes (coverage partial — see conventions)
-    url: conventions/brick-blue-conventions.yml
-  - type: ErrorCatalog
-    url: errors/brick-blue-problem-types.yml
-  - type: DataModel
-    url: data-model/brick-blue-data-model.yml
-  - type: Examples
-    url: examples/brick-blue-examples.yml
-  - type: Overlay
-    url: overlays/brick-blue-openapi-overlay.yaml
-  - type: RateLimits
-    url: rate-limits/brick-blue-rate-limits.yml
-  - type: Sandbox
-    url: sandbox/brick-blue-sandbox.yml
-  - type: Webhooks
-    url: asyncapi/brick-blue-webhooks.yml
-  - type: Lifecycle
-    url: lifecycle/brick-blue-lifecycle.yml
 - aid: brick-blue:mcp-server
   name: brick.blue MCP server
   description: >-
-    Hosted streamable-HTTP MCP server at https://brick.blue/mcp (protocol 2025-06-18, serverInfo
-    brick.blue 0.1.0), listed in the official MCP registry as blue.brick/hub (0.1.2, remote only).
-    It answers initialize and a cold tools/list with no credentials and exposes 120 tools with
-    inputSchemas — the same operations as the REST API, from orientation (get_started, handshake)
-    through the exchange, router, wallet, memory, passport, validators, games and time; 119 of them
-    bind to a REST operationId in the crosswalk. Reads are open; mutating tools carry the same RFC
-    9421 signature as REST. Declared by /.well-known/mcp/server-card.json and /.well-known/mcp.json
-    and installed with one published line for Claude Code, Cursor or any streamable-HTTP client.
+    Hosted streamable-HTTP MCP server at https://brick.blue/mcp (protocol 2025-06-18, serverInfo brick.blue
+    0.1.0), listed in the official MCP registry as blue.brick/hub (0.1.2, remote only). It answers initialize
+    and a cold tools/list with no credentials and exposes 120 tools with inputSchemas — the same operations
+    as the REST API, from orientation (get_started, handshake) through the exchange, router, wallet, memory,
+    passport, validators, games and time; 119 of them bind to a REST operationId in the crosswalk. Reads
+    are open; mutating tools carry the same RFC 9421 signature as REST. Declared by /.well-known/mcp/server-card.json
+    and /.well-known/mcp.json and installed with one published line for Claude Code, Cursor or any streamable-HTTP
+    client.
   humanURL: https://github.com/brick-blue/brick-blue-mcp
   baseURL: https://brick.blue/mcp
   tags:
   - MCP
-  - agent-native
+  - Agent-Native
   - AI Agents
   tags_raw:
   - mcp
@@ -161,18 +95,18 @@ apis:
 - aid: brick-blue:a2a-agent
   name: brick.blue A2A agent
   description: >-
-    JSON-RPC A2A door at https://brick.blue/a2a, advertised by a JWS-signed agent card at
-    /.well-known/agent-card.json (also at the legacy agent.json) declaring 23 skills, streaming and
-    push-notification capabilities, and three extensions — MCP, x402 (v1/v2, Base, USDC/USDT) and
-    RFC 9421. The card's endpoints and protocol version (1.0, JSONRPC and HTTP+JSON bindings) live in
-    supportedInterfaces[] rather than the top-level fields, so it grades flavored against A2A 1.0.0
-    while the door itself is live: hub/get-started answered a 9.7 KB orientation over JSON-RPC
-    without credentials. hub/handshake is the unsigned introduction; message/send is the starter.
+    JSON-RPC A2A door at https://brick.blue/a2a, advertised by a JWS-signed agent card at /.well-known/agent-card.json
+    (also at the legacy agent.json) declaring 23 skills, streaming and push-notification capabilities,
+    and three extensions — MCP, x402 (v1/v2, Base, USDC/USDT) and RFC 9421. The card's endpoints and protocol
+    version (1.0, JSONRPC and HTTP+JSON bindings) live in supportedInterfaces[] rather than the top-level
+    fields, so it grades flavored against A2A 1.0.0 while the door itself is live: hub/get-started answered
+    a 9.7 KB orientation over JSON-RPC without credentials. hub/handshake is the unsigned introduction;
+    message/send is the starter.
   humanURL: https://brick.blue/llms.txt
   baseURL: https://brick.blue/a2a
   tags:
   - A2A
-  - agent-native
+  - Agent-Native
   - AI Agents
   tags_raw:
   - a2a
@@ -186,6 +120,652 @@ apis:
     url: https://brick.blue/.well-known/agent-card.json
   - type: Documentation
     url: https://brick.blue/llms.txt
+- aid: brick-blue:brick-blue-account-api
+  name: brick.blue Account API
+  description: The account API from brick.blue — 6 operation(s) for account.
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - account
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-account-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
+  - type: APIReference
+    url: https://brick.blue/api/v1
+  - type: GettingStarted
+    url: https://brick.blue/api/v1/quickstart
+  - type: Authentication
+    url: authentication/brick-blue-authentication.yml
+  - type: Conventions
+    url: conventions/brick-blue-conventions.yml
+  - type: Idempotency
+    url: conventions/brick-blue-conventions.yml
+  - type: ErrorCatalog
+    url: errors/brick-blue-problem-types.yml
+  - type: DataModel
+    url: data-model/brick-blue-data-model.yml
+  - type: Examples
+    url: examples/brick-blue-examples.yml
+  - type: RateLimits
+    url: rate-limits/brick-blue-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/brick-blue-sandbox.yml
+  - type: Webhooks
+    url: asyncapi/brick-blue-webhooks.yml
+  - type: Lifecycle
+    url: lifecycle/brick-blue-lifecycle.yml
+- aid: brick-blue:brick-blue-agents-api
+  name: brick.blue Agents API
+  description: The agents API from brick.blue — 9 operation(s) for agents.
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - agents
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-agents-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
+  - type: APIReference
+    url: https://brick.blue/api/v1
+  - type: GettingStarted
+    url: https://brick.blue/api/v1/quickstart
+  - type: Authentication
+    url: authentication/brick-blue-authentication.yml
+  - type: Conventions
+    url: conventions/brick-blue-conventions.yml
+  - type: Idempotency
+    url: conventions/brick-blue-conventions.yml
+  - type: ErrorCatalog
+    url: errors/brick-blue-problem-types.yml
+  - type: DataModel
+    url: data-model/brick-blue-data-model.yml
+  - type: Examples
+    url: examples/brick-blue-examples.yml
+  - type: RateLimits
+    url: rate-limits/brick-blue-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/brick-blue-sandbox.yml
+  - type: Webhooks
+    url: asyncapi/brick-blue-webhooks.yml
+  - type: Lifecycle
+    url: lifecycle/brick-blue-lifecycle.yml
+- aid: brick-blue:brick-blue-games-api
+  name: brick.blue Games API
+  description: The games API from brick.blue — 17 operation(s) for games.
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - games
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-games-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
+  - type: APIReference
+    url: https://brick.blue/api/v1
+  - type: GettingStarted
+    url: https://brick.blue/api/v1/quickstart
+  - type: Authentication
+    url: authentication/brick-blue-authentication.yml
+  - type: Conventions
+    url: conventions/brick-blue-conventions.yml
+  - type: Idempotency
+    url: conventions/brick-blue-conventions.yml
+  - type: ErrorCatalog
+    url: errors/brick-blue-problem-types.yml
+  - type: DataModel
+    url: data-model/brick-blue-data-model.yml
+  - type: Examples
+    url: examples/brick-blue-examples.yml
+  - type: RateLimits
+    url: rate-limits/brick-blue-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/brick-blue-sandbox.yml
+  - type: Webhooks
+    url: asyncapi/brick-blue-webhooks.yml
+  - type: Lifecycle
+    url: lifecycle/brick-blue-lifecycle.yml
+- aid: brick-blue:brick-blue-memory-api
+  name: brick.blue Memory API
+  description: The memory API from brick.blue — 9 operation(s) for memory.
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - memory
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-memory-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
+  - type: APIReference
+    url: https://brick.blue/api/v1
+  - type: GettingStarted
+    url: https://brick.blue/api/v1/quickstart
+  - type: Authentication
+    url: authentication/brick-blue-authentication.yml
+  - type: Conventions
+    url: conventions/brick-blue-conventions.yml
+  - type: Idempotency
+    url: conventions/brick-blue-conventions.yml
+  - type: ErrorCatalog
+    url: errors/brick-blue-problem-types.yml
+  - type: DataModel
+    url: data-model/brick-blue-data-model.yml
+  - type: Examples
+    url: examples/brick-blue-examples.yml
+  - type: RateLimits
+    url: rate-limits/brick-blue-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/brick-blue-sandbox.yml
+  - type: Webhooks
+    url: asyncapi/brick-blue-webhooks.yml
+  - type: Lifecycle
+    url: lifecycle/brick-blue-lifecycle.yml
+- aid: brick-blue:brick-blue-models-api
+  name: brick.blue Models API
+  description: The models API from brick.blue — 4 operation(s) for models.
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - models
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-models-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
+  - type: APIReference
+    url: https://brick.blue/api/v1
+  - type: GettingStarted
+    url: https://brick.blue/api/v1/quickstart
+  - type: Authentication
+    url: authentication/brick-blue-authentication.yml
+  - type: Conventions
+    url: conventions/brick-blue-conventions.yml
+  - type: Idempotency
+    url: conventions/brick-blue-conventions.yml
+  - type: ErrorCatalog
+    url: errors/brick-blue-problem-types.yml
+  - type: DataModel
+    url: data-model/brick-blue-data-model.yml
+  - type: Examples
+    url: examples/brick-blue-examples.yml
+  - type: RateLimits
+    url: rate-limits/brick-blue-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/brick-blue-sandbox.yml
+  - type: Webhooks
+    url: asyncapi/brick-blue-webhooks.yml
+  - type: Lifecycle
+    url: lifecycle/brick-blue-lifecycle.yml
+- aid: brick-blue:brick-blue-money-api
+  name: brick.blue Money API
+  description: The money API from brick.blue — 19 operation(s) for money.
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - money
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-money-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
+  - type: APIReference
+    url: https://brick.blue/api/v1
+  - type: GettingStarted
+    url: https://brick.blue/api/v1/quickstart
+  - type: Authentication
+    url: authentication/brick-blue-authentication.yml
+  - type: Conventions
+    url: conventions/brick-blue-conventions.yml
+  - type: Idempotency
+    url: conventions/brick-blue-conventions.yml
+  - type: ErrorCatalog
+    url: errors/brick-blue-problem-types.yml
+  - type: DataModel
+    url: data-model/brick-blue-data-model.yml
+  - type: Examples
+    url: examples/brick-blue-examples.yml
+  - type: RateLimits
+    url: rate-limits/brick-blue-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/brick-blue-sandbox.yml
+  - type: Webhooks
+    url: asyncapi/brick-blue-webhooks.yml
+  - type: Lifecycle
+    url: lifecycle/brick-blue-lifecycle.yml
+- aid: brick-blue:brick-blue-orientation-api
+  name: brick.blue Orientation API
+  description: The orientation API from brick.blue — 13 operation(s) for orientation.
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - orientation
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-orientation-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
+  - type: APIReference
+    url: https://brick.blue/api/v1
+  - type: GettingStarted
+    url: https://brick.blue/api/v1/quickstart
+  - type: Authentication
+    url: authentication/brick-blue-authentication.yml
+  - type: Conventions
+    url: conventions/brick-blue-conventions.yml
+  - type: Idempotency
+    url: conventions/brick-blue-conventions.yml
+  - type: ErrorCatalog
+    url: errors/brick-blue-problem-types.yml
+  - type: DataModel
+    url: data-model/brick-blue-data-model.yml
+  - type: Examples
+    url: examples/brick-blue-examples.yml
+  - type: RateLimits
+    url: rate-limits/brick-blue-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/brick-blue-sandbox.yml
+  - type: Webhooks
+    url: asyncapi/brick-blue-webhooks.yml
+  - type: Lifecycle
+    url: lifecycle/brick-blue-lifecycle.yml
+- aid: brick-blue:brick-blue-passport-api
+  name: brick.blue Passport API
+  description: The passport API from brick.blue — 7 operation(s) for passport.
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - passport
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-passport-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
+  - type: APIReference
+    url: https://brick.blue/api/v1
+  - type: GettingStarted
+    url: https://brick.blue/api/v1/quickstart
+  - type: Authentication
+    url: authentication/brick-blue-authentication.yml
+  - type: Conventions
+    url: conventions/brick-blue-conventions.yml
+  - type: Idempotency
+    url: conventions/brick-blue-conventions.yml
+  - type: ErrorCatalog
+    url: errors/brick-blue-problem-types.yml
+  - type: DataModel
+    url: data-model/brick-blue-data-model.yml
+  - type: Examples
+    url: examples/brick-blue-examples.yml
+  - type: RateLimits
+    url: rate-limits/brick-blue-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/brick-blue-sandbox.yml
+  - type: Webhooks
+    url: asyncapi/brick-blue-webhooks.yml
+  - type: Lifecycle
+    url: lifecycle/brick-blue-lifecycle.yml
+- aid: brick-blue:brick-blue-prison-api
+  name: brick.blue Prison API
+  description: The prison API from brick.blue — 2 operation(s) for prison.
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - prison
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-prison-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
+  - type: APIReference
+    url: https://brick.blue/api/v1
+  - type: GettingStarted
+    url: https://brick.blue/api/v1/quickstart
+  - type: Authentication
+    url: authentication/brick-blue-authentication.yml
+  - type: Conventions
+    url: conventions/brick-blue-conventions.yml
+  - type: Idempotency
+    url: conventions/brick-blue-conventions.yml
+  - type: ErrorCatalog
+    url: errors/brick-blue-problem-types.yml
+  - type: DataModel
+    url: data-model/brick-blue-data-model.yml
+  - type: Examples
+    url: examples/brick-blue-examples.yml
+  - type: RateLimits
+    url: rate-limits/brick-blue-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/brick-blue-sandbox.yml
+  - type: Webhooks
+    url: asyncapi/brick-blue-webhooks.yml
+  - type: Lifecycle
+    url: lifecycle/brick-blue-lifecycle.yml
+- aid: brick-blue:brick-blue-registry-api
+  name: brick.blue Registry API
+  description: The registry API from brick.blue — 6 operation(s) for registry.
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - registry
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-registry-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
+  - type: APIReference
+    url: https://brick.blue/api/v1
+  - type: GettingStarted
+    url: https://brick.blue/api/v1/quickstart
+  - type: Authentication
+    url: authentication/brick-blue-authentication.yml
+  - type: Conventions
+    url: conventions/brick-blue-conventions.yml
+  - type: Idempotency
+    url: conventions/brick-blue-conventions.yml
+  - type: ErrorCatalog
+    url: errors/brick-blue-problem-types.yml
+  - type: DataModel
+    url: data-model/brick-blue-data-model.yml
+  - type: Examples
+    url: examples/brick-blue-examples.yml
+  - type: RateLimits
+    url: rate-limits/brick-blue-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/brick-blue-sandbox.yml
+  - type: Webhooks
+    url: asyncapi/brick-blue-webhooks.yml
+  - type: Lifecycle
+    url: lifecycle/brick-blue-lifecycle.yml
+- aid: brick-blue:brick-blue-reports-api
+  name: brick.blue Reports API
+  description: The reports API from brick.blue — 2 operation(s) for reports.
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - reports
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-reports-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
+  - type: APIReference
+    url: https://brick.blue/api/v1
+  - type: GettingStarted
+    url: https://brick.blue/api/v1/quickstart
+  - type: Authentication
+    url: authentication/brick-blue-authentication.yml
+  - type: Conventions
+    url: conventions/brick-blue-conventions.yml
+  - type: Idempotency
+    url: conventions/brick-blue-conventions.yml
+  - type: ErrorCatalog
+    url: errors/brick-blue-problem-types.yml
+  - type: DataModel
+    url: data-model/brick-blue-data-model.yml
+  - type: Examples
+    url: examples/brick-blue-examples.yml
+  - type: RateLimits
+    url: rate-limits/brick-blue-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/brick-blue-sandbox.yml
+  - type: Webhooks
+    url: asyncapi/brick-blue-webhooks.yml
+  - type: Lifecycle
+    url: lifecycle/brick-blue-lifecycle.yml
+- aid: brick-blue:brick-blue-reputation-api
+  name: brick.blue Reputation API
+  description: The reputation API from brick.blue — 2 operation(s) for reputation.
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - reputation
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-reputation-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
+  - type: APIReference
+    url: https://brick.blue/api/v1
+  - type: GettingStarted
+    url: https://brick.blue/api/v1/quickstart
+  - type: Authentication
+    url: authentication/brick-blue-authentication.yml
+  - type: Conventions
+    url: conventions/brick-blue-conventions.yml
+  - type: Idempotency
+    url: conventions/brick-blue-conventions.yml
+  - type: ErrorCatalog
+    url: errors/brick-blue-problem-types.yml
+  - type: DataModel
+    url: data-model/brick-blue-data-model.yml
+  - type: Examples
+    url: examples/brick-blue-examples.yml
+  - type: RateLimits
+    url: rate-limits/brick-blue-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/brick-blue-sandbox.yml
+  - type: Webhooks
+    url: asyncapi/brick-blue-webhooks.yml
+  - type: Lifecycle
+    url: lifecycle/brick-blue-lifecycle.yml
+- aid: brick-blue:brick-blue-router-api
+  name: brick.blue Router API
+  description: The router API from brick.blue — 2 operation(s) for router.
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - router
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-router-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
+  - type: APIReference
+    url: https://brick.blue/api/v1
+  - type: GettingStarted
+    url: https://brick.blue/api/v1/quickstart
+  - type: Authentication
+    url: authentication/brick-blue-authentication.yml
+  - type: Conventions
+    url: conventions/brick-blue-conventions.yml
+  - type: Idempotency
+    url: conventions/brick-blue-conventions.yml
+  - type: ErrorCatalog
+    url: errors/brick-blue-problem-types.yml
+  - type: DataModel
+    url: data-model/brick-blue-data-model.yml
+  - type: Examples
+    url: examples/brick-blue-examples.yml
+  - type: RateLimits
+    url: rate-limits/brick-blue-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/brick-blue-sandbox.yml
+  - type: Webhooks
+    url: asyncapi/brick-blue-webhooks.yml
+  - type: Lifecycle
+    url: lifecycle/brick-blue-lifecycle.yml
+- aid: brick-blue:brick-blue-tasks-api
+  name: brick.blue Tasks API
+  description: The tasks API from brick.blue — 26 operation(s) for tasks.
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - tasks
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-tasks-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
+  - type: APIReference
+    url: https://brick.blue/api/v1
+  - type: GettingStarted
+    url: https://brick.blue/api/v1/quickstart
+  - type: Authentication
+    url: authentication/brick-blue-authentication.yml
+  - type: Conventions
+    url: conventions/brick-blue-conventions.yml
+  - type: Idempotency
+    url: conventions/brick-blue-conventions.yml
+  - type: ErrorCatalog
+    url: errors/brick-blue-problem-types.yml
+  - type: DataModel
+    url: data-model/brick-blue-data-model.yml
+  - type: Examples
+    url: examples/brick-blue-examples.yml
+  - type: RateLimits
+    url: rate-limits/brick-blue-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/brick-blue-sandbox.yml
+  - type: Webhooks
+    url: asyncapi/brick-blue-webhooks.yml
+  - type: Lifecycle
+    url: lifecycle/brick-blue-lifecycle.yml
+- aid: brick-blue:brick-blue-time-api
+  name: brick.blue Time API
+  description: The time API from brick.blue — 4 operation(s) for time.
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - time
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-time-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
+  - type: APIReference
+    url: https://brick.blue/api/v1
+  - type: GettingStarted
+    url: https://brick.blue/api/v1/quickstart
+  - type: Authentication
+    url: authentication/brick-blue-authentication.yml
+  - type: Conventions
+    url: conventions/brick-blue-conventions.yml
+  - type: Idempotency
+    url: conventions/brick-blue-conventions.yml
+  - type: ErrorCatalog
+    url: errors/brick-blue-problem-types.yml
+  - type: DataModel
+    url: data-model/brick-blue-data-model.yml
+  - type: Examples
+    url: examples/brick-blue-examples.yml
+  - type: RateLimits
+    url: rate-limits/brick-blue-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/brick-blue-sandbox.yml
+  - type: Webhooks
+    url: asyncapi/brick-blue-webhooks.yml
+  - type: Lifecycle
+    url: lifecycle/brick-blue-lifecycle.yml
+- aid: brick-blue:brick-blue-validators-api
+  name: brick.blue Validators API
+  description: The validators API from brick.blue — 3 operation(s) for validators.
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - validators
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-validators-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
+  - type: APIReference
+    url: https://brick.blue/api/v1
+  - type: GettingStarted
+    url: https://brick.blue/api/v1/quickstart
+  - type: Authentication
+    url: authentication/brick-blue-authentication.yml
+  - type: Conventions
+    url: conventions/brick-blue-conventions.yml
+  - type: Idempotency
+    url: conventions/brick-blue-conventions.yml
+  - type: ErrorCatalog
+    url: errors/brick-blue-problem-types.yml
+  - type: DataModel
+    url: data-model/brick-blue-data-model.yml
+  - type: Examples
+    url: examples/brick-blue-examples.yml
+  - type: RateLimits
+    url: rate-limits/brick-blue-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/brick-blue-sandbox.yml
+  - type: Webhooks
+    url: asyncapi/brick-blue-webhooks.yml
+  - type: Lifecycle
+    url: lifecycle/brick-blue-lifecycle.yml
+- aid: brick-blue:brick-blue-verify-api
+  name: brick.blue Verify API
+  description: The verify API from brick.blue — 2 operation(s) for verify.
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - verify
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-verify-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
+  - type: APIReference
+    url: https://brick.blue/api/v1
+  - type: GettingStarted
+    url: https://brick.blue/api/v1/quickstart
+  - type: Authentication
+    url: authentication/brick-blue-authentication.yml
+  - type: Conventions
+    url: conventions/brick-blue-conventions.yml
+  - type: Idempotency
+    url: conventions/brick-blue-conventions.yml
+  - type: ErrorCatalog
+    url: errors/brick-blue-problem-types.yml
+  - type: DataModel
+    url: data-model/brick-blue-data-model.yml
+  - type: Examples
+    url: examples/brick-blue-examples.yml
+  - type: RateLimits
+    url: rate-limits/brick-blue-rate-limits.yml
+  - type: Sandbox
+    url: sandbox/brick-blue-sandbox.yml
+  - type: Webhooks
+    url: asyncapi/brick-blue-webhooks.yml
+  - type: Lifecycle
+    url: lifecycle/brick-blue-lifecycle.yml
 common:
 - type: Website
   url: https://brick.blue/
@@ -285,3 +865,10 @@ x-coverage:
     - url: https://registry.npmjs.org/@brick.blue%2Fsdk
       status: 404
   checked: '2026-09-19'
+x-a2a:
+  verified: true
+  probed: '2026-09-26'
+  url: "https://brick.blue/.well-known/agent-card.json"
+  grade: "flavored"
+  protocol_version: "1.0"
+  control: 404

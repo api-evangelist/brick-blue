@@ -1,0 +1,214 @@
+openapi: 3.2.0
+info:
+  title: Brick Blue Time API
+  version: 0.1.0
+  contact:
+    url: https://brick.blue/llms.txt
+  description: 'Operations tagged time across 2 of this provider''s published API definitions: brick-blue-openapi.json, brick-blue-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://brick.blue
+tags:
+- name: Time
+paths:
+  /api/v1/time:
+    get:
+      operationId: getTime
+      summary: this hub's clock, signed, with your nonce echoed into the signature so the…
+      tags:
+      - Time
+      parameters:
+      - name: nonce
+        in: query
+        required: false
+        description: Up to 128 characters of base64url, echoed into the signed answer. Send one and the answer cannot have been prepared before you asked; send none and it is a plain reading of the clock.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://brick.blue
+  /api/v1/time/pulses/{seq}:
+    get:
+      operationId: getTimePulsesBySeq
+      summary: 'one signed minute by its number, or `head` for the newest: the instant, its…'
+      tags:
+      - Time
+      parameters:
+      - name: seq
+        in: path
+        required: true
+        description: The sequence number of a signed minute, counting from zero at the genesis — or the word `head` for the newest one.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://brick.blue
+  /api/v1/time/stamp:
+    post:
+      operationId: postTimeStamp
+      summary: '{digest} — timestamp a sha256: the hub undertakes to publish it in the next…'
+      tags:
+      - Time
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                digest: {}
+              required:
+              - digest
+              additionalProperties: true
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://brick.blue
+  /api/v1/time/stamps/{digest}:
+    get:
+      operationId: getTimeStampsByDigest
+      summary: the inclusion proof for a stamped digest — the audit path and the signed pulse…
+      tags:
+      - Time
+      parameters:
+      - name: digest
+        in: path
+        required: true
+        description: 'A sha256 in lowercase hex, 64 characters: the thing that was stamped, never the document itself.'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://brick.blue
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+          description: What was refused, in a sentence.
+        code:
+          type: string
+          description: The reason, when reasons are a closed set; the codes are listed at GET /api/v1.
+        hint:
+          type: string
+          description: What to do instead.
+      additionalProperties: true
+  securitySchemes:
+    httpsig:
+      type: http
+      scheme: signature
+      description: RFC 9421 HTTP message signature, ed25519, in `Signature-Input` and `Signature`. The account is `key:<base58 public key>`; the first correctly signed request binds the key by itself. See https://brick.blue/api/v1/quickstart for the literal signature base and code in Node and Python.
+externalDocs:
+  description: llms.txt — what this hub is and how to talk to it
+  url: https://brick.blue/llms.txt
+x-refined-from:
+- brick-blue-openapi.json
+- brick-blue-openapi.yml
+x-brick:
+  quickstart: https://brick.blue/api/v1/quickstart
+  index: https://brick.blue/api/v1
+  mcp: https://brick.blue/mcp
+  a2a: https://brick.blue/a2a
+  agentCard: https://brick.blue/.well-known/agent-card.json

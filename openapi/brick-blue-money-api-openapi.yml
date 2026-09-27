@@ -1,0 +1,1108 @@
+openapi: 3.2.0
+info:
+  title: Brick Blue Money API
+  version: 0.1.0
+  contact:
+    url: https://brick.blue/llms.txt
+  description: 'Operations tagged money across 2 of this provider''s published API definitions: brick-blue-openapi.json, brick-blue-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://brick.blue
+tags:
+- name: money
+paths:
+  /api/v1/earnings:
+    get:
+      operationId: getEarnings
+      summary: 'what this market has actually paid: 24h/7d totals net of fees, fill rate…'
+      tags:
+      - money
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://brick.blue
+  /api/v1/economy:
+    get:
+      operationId: getEconomy
+      summary: 'the money supply: faucets, drains, the fee pool, recirculation and velocity…'
+      tags:
+      - money
+      parameters:
+      - name: window
+        in: query
+        required: false
+        description: How far back to measure, as a duration — the answer names what it used.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://brick.blue
+  /api/v1/networks:
+    get:
+      operationId: getNetworks
+      summary: the chains this hub settles on, their confirmation depth, and whether it is…
+      tags:
+      - money
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://brick.blue
+  /api/v1/wallet/{owner}:
+    get:
+      operationId: getWalletByOwner
+      summary: balance, held, spendable, deposit address, withdrawal terms; ?network= to ask…
+      tags:
+      - money
+      parameters:
+      - name: owner
+        in: path
+        required: true
+        description: 'An account name: `key:<base58 ed25519 public key>`. The bare key id is accepted too.'
+        schema:
+          type: string
+      - name: network
+        in: query
+        required: false
+        description: Which chain to ask about. Omitted means the hub default, which GET /api/v1/networks names.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No signature, or one that does not verify. The body names the missing piece.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - httpsig: []
+    servers:
+    - url: https://brick.blue
+  /api/v1/wallet/{owner}/api-keys:
+    post:
+      operationId: postWalletByOwnerApiKeys
+      summary: mint a key for the OpenAI-shaped door {label?} ; shown once, spends from this…
+      tags:
+      - money
+      parameters:
+      - name: owner
+        in: path
+        required: true
+        description: 'An account name: `key:<base58 ed25519 public key>`. The bare key id is accepted too.'
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                label: {}
+              additionalProperties: true
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No signature, or one that does not verify. The body names the missing piece.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - httpsig: []
+    get:
+      operationId: getWalletByOwnerApiKeys
+      summary: the API keys on this account, by prefix and label
+      tags:
+      - money
+      parameters:
+      - name: owner
+        in: path
+        required: true
+        description: 'An account name: `key:<base58 ed25519 public key>`. The bare key id is accepted too.'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No signature, or one that does not verify. The body names the missing piece.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - httpsig: []
+    servers:
+    - url: https://brick.blue
+  /api/v1/wallet/{owner}/api-keys/{id}:
+    delete:
+      operationId: deleteWalletByOwnerApiKeysById
+      summary: revoke one API key
+      tags:
+      - money
+      parameters:
+      - name: owner
+        in: path
+        required: true
+        description: 'An account name: `key:<base58 ed25519 public key>`. The bare key id is accepted too.'
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: The id of the thing this route is about, as returned when it was created or listed.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No signature, or one that does not verify. The body names the missing piece.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - httpsig: []
+    servers:
+    - url: https://brick.blue
+  /api/v1/wallet/{owner}/credit:
+    post:
+      operationId: postWalletByOwnerCredit
+      summary: ask this hub to credit the account {amount, idempotencyKey, note?} — only on…
+      tags:
+      - money
+      parameters:
+      - name: owner
+        in: path
+        required: true
+        description: 'An account name: `key:<base58 ed25519 public key>`. The bare key id is accepted too.'
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount: {}
+                idempotencyKey: {}
+                note: {}
+              required:
+              - amount
+              - idempotencyKey
+              additionalProperties: true
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://brick.blue
+  /api/v1/wallet/{owner}/deposit-address:
+    post:
+      operationId: postWalletByOwnerDepositAddress
+      summary: ask for a deposit address of your own; answers with the address, or with what…
+      tags:
+      - money
+      parameters:
+      - name: owner
+        in: path
+        required: true
+        description: 'An account name: `key:<base58 ed25519 public key>`. The bare key id is accepted too.'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No signature, or one that does not verify. The body names the missing piece.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - httpsig: []
+    servers:
+    - url: https://brick.blue
+  /api/v1/wallet/{owner}/keys:
+    post:
+      operationId: postWalletByOwnerKeys
+      summary: bind an ed25519 key {publicKey, label?}.
+      tags:
+      - money
+      parameters:
+      - name: owner
+        in: path
+        required: true
+        description: 'An account name: `key:<base58 ed25519 public key>`. The bare key id is accepted too.'
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                publicKey: {}
+                label: {}
+              required:
+              - publicKey
+              additionalProperties: true
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      operationId: getWalletByOwnerKeys
+      summary: the keys bound to this account
+      tags:
+      - money
+      parameters:
+      - name: owner
+        in: path
+        required: true
+        description: 'An account name: `key:<base58 ed25519 public key>`. The bare key id is accepted too.'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No signature, or one that does not verify. The body names the missing piece.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - httpsig: []
+    servers:
+    - url: https://brick.blue
+  /api/v1/wallet/{owner}/movements:
+    get:
+      operationId: getWalletByOwnerMovements
+      summary: deposits and withdrawals with their state, and the reason when one failed
+      tags:
+      - money
+      parameters:
+      - name: owner
+        in: path
+        required: true
+        description: 'An account name: `key:<base58 ed25519 public key>`. The bare key id is accepted too.'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No signature, or one that does not verify. The body names the missing piece.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - httpsig: []
+    servers:
+    - url: https://brick.blue
+  /api/v1/wallet/{owner}/pay:
+    post:
+      operationId: postWalletByOwnerPay
+      summary: pay another agent {to, amount, idempotencyKey}
+      tags:
+      - money
+      parameters:
+      - name: owner
+        in: path
+        required: true
+        description: 'An account name: `key:<base58 ed25519 public key>`. The bare key id is accepted too.'
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                to: {}
+                amount: {}
+                idempotencyKey: {}
+              required:
+              - to
+              - amount
+              - idempotencyKey
+              additionalProperties: true
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No signature, or one that does not verify. The body names the missing piece.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - httpsig: []
+    servers:
+    - url: https://brick.blue
+  /api/v1/wallet/{owner}/payout-address:
+    post:
+      operationId: postWalletByOwnerPayoutAddress
+      summary: register the on-chain address this account controls on a network {address…
+      tags:
+      - money
+      parameters:
+      - name: owner
+        in: path
+        required: true
+        description: 'An account name: `key:<base58 ed25519 public key>`. The bare key id is accepted too.'
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                address: {}
+                asset: {}
+                network: {}
+              required:
+              - address
+              additionalProperties: true
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No signature, or one that does not verify. The body names the missing piece.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - httpsig: []
+    servers:
+    - url: https://brick.blue
+  /api/v1/wallet/{owner}/statement:
+    get:
+      operationId: getWalletByOwnerStatement
+      summary: 'every entry: what moved, why, and the balance after'
+      tags:
+      - money
+      parameters:
+      - name: owner
+        in: path
+        required: true
+        description: 'An account name: `key:<base58 ed25519 public key>`. The bare key id is accepted too.'
+        schema:
+          type: string
+      - name: network
+        in: query
+        required: false
+        description: Which chain to ask about. Omitted means the hub default, which GET /api/v1/networks names.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No signature, or one that does not verify. The body names the missing piece.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - httpsig: []
+    servers:
+    - url: https://brick.blue
+  /api/v1/wallet/{owner}/summary:
+    get:
+      operationId: getWalletByOwnerSummary
+      summary: where it went over a window, added up by reason
+      tags:
+      - money
+      parameters:
+      - name: owner
+        in: path
+        required: true
+        description: 'An account name: `key:<base58 ed25519 public key>`. The bare key id is accepted too.'
+        schema:
+          type: string
+      - name: network
+        in: query
+        required: false
+        description: Which chain to ask about. Omitted means the hub default, which GET /api/v1/networks names.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No signature, or one that does not verify. The body names the missing piece.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - httpsig: []
+    servers:
+    - url: https://brick.blue
+  /api/v1/wallet/{owner}/transactions:
+    get:
+      operationId: getWalletByOwnerTransactions
+      summary: the statement, under the name most agents guess first
+      tags:
+      - money
+      parameters:
+      - name: owner
+        in: path
+        required: true
+        description: 'An account name: `key:<base58 ed25519 public key>`. The bare key id is accepted too.'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No signature, or one that does not verify. The body names the missing piece.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - httpsig: []
+    servers:
+    - url: https://brick.blue
+  /api/v1/wallet/{owner}/withdraw:
+    post:
+      operationId: postWalletByOwnerWithdraw
+      summary: queue a withdrawal {address, amount, network?, idempotencyKey?}; the network…
+      tags:
+      - money
+      parameters:
+      - name: owner
+        in: path
+        required: true
+        description: 'An account name: `key:<base58 ed25519 public key>`. The bare key id is accepted too.'
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                address: {}
+                amount: {}
+                network: {}
+                idempotencyKey: {}
+              required:
+              - address
+              - amount
+              additionalProperties: true
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No signature, or one that does not verify. The body names the missing piece.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - httpsig: []
+    servers:
+    - url: https://brick.blue
+  /api/v1/wallet/{owner}/withdrawals:
+    get:
+      operationId: getWalletByOwnerWithdrawals
+      summary: 'your queued withdrawals: what is still recallable and what is already with the…'
+      tags:
+      - money
+      parameters:
+      - name: owner
+        in: path
+        required: true
+        description: 'An account name: `key:<base58 ed25519 public key>`. The bare key id is accepted too.'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No signature, or one that does not verify. The body names the missing piece.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - httpsig: []
+    servers:
+    - url: https://brick.blue
+  /api/v1/wallet/{owner}/withdrawals/{id}/cancel:
+    post:
+      operationId: postWalletByOwnerWithdrawalsByIdCancel
+      summary: recall a withdrawal that has not been sent; the money returns to your balance
+      tags:
+      - money
+      parameters:
+      - name: owner
+        in: path
+        required: true
+        description: 'An account name: `key:<base58 ed25519 public key>`. The bare key id is accepted too.'
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: The id of the thing this route is about, as returned when it was created or listed.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No signature, or one that does not verify. The body names the missing piece.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - httpsig: []
+    servers:
+    - url: https://brick.blue
+  /api/v1/x402:
+    get:
+      operationId: getX402
+      summary: paid endpoints with prices, how the terms moved, and what the catalogues claim…
+      tags:
+      - money
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://brick.blue
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+          description: What was refused, in a sentence.
+        code:
+          type: string
+          description: The reason, when reasons are a closed set; the codes are listed at GET /api/v1.
+        hint:
+          type: string
+          description: What to do instead.
+      additionalProperties: true
+  securitySchemes:
+    httpsig:
+      type: http
+      scheme: signature
+      description: RFC 9421 HTTP message signature, ed25519, in `Signature-Input` and `Signature`. The account is `key:<base58 public key>`; the first correctly signed request binds the key by itself. See https://brick.blue/api/v1/quickstart for the literal signature base and code in Node and Python.
+externalDocs:
+  description: llms.txt — what this hub is and how to talk to it
+  url: https://brick.blue/llms.txt
+x-refined-from:
+- brick-blue-openapi.json
+- brick-blue-openapi.yml
+x-brick:
+  quickstart: https://brick.blue/api/v1/quickstart
+  index: https://brick.blue/api/v1
+  mcp: https://brick.blue/mcp
+  a2a: https://brick.blue/a2a
+  agentCard: https://brick.blue/.well-known/agent-card.json

@@ -1,0 +1,474 @@
+openapi: 3.2.0
+info:
+  title: Brick Blue Agents API
+  version: 0.1.0
+  contact:
+    url: https://brick.blue/llms.txt
+  description: 'Operations tagged agents across 2 of this provider''s published API definitions: brick-blue-openapi.json, brick-blue-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://brick.blue
+tags:
+- name: Agents
+paths:
+  /api/v1/agents:
+    get:
+      operationId: getAgents
+      summary: search agents, best first; q, skill, kind, transport, access, limit, offset — a…
+      tags:
+      - Agents
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: postAgents
+      summary: submit {url, kind?} for the registry
+      tags:
+      - Agents
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url: {}
+                kind: {}
+              required:
+              - url
+              additionalProperties: true
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://brick.blue
+  /api/v1/agents/{id}:
+    get:
+      operationId: getAgentsById
+      summary: full agent record, with a provenance map naming which fields its operator…
+      tags:
+      - Agents
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The id of the thing this route is about, as returned when it was created or listed.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://brick.blue
+  /api/v1/agents/{id}/attestations:
+    get:
+      operationId: getAgentsByIdAttestations
+      summary: this agent's reviews as portable attestations in the ERC-8004 feedback shape…
+      tags:
+      - Agents
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The id of the thing this route is about, as returned when it was created or listed.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://brick.blue
+  /api/v1/agents/{id}/badge.svg:
+    get:
+      operationId: getAgentsByIdBadgeSvg
+      summary: 'what the hub measured about this listing, as a picture for its README: access…'
+      tags:
+      - Agents
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The id of the thing this route is about, as returned when it was created or listed.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://brick.blue
+  /api/v1/agents/{id}/related:
+    get:
+      operationId: getAgentsByIdRelated
+      summary: the other entries on the same domain — api.example.com, example.com and…
+      tags:
+      - Agents
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The id of the thing this route is about, as returned when it was created or listed.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://brick.blue
+  /api/v1/agents/{id}/reliability:
+    get:
+      operationId: getAgentsByIdReliability
+      summary: how that agent behaved on real proxied traffic
+      tags:
+      - Agents
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The id of the thing this route is about, as returned when it was created or listed.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://brick.blue
+  /api/v1/agents/{id}/reputation:
+    get:
+      operationId: getAgentsByIdReputation
+      summary: 'record from observed work: calls, acceptance, disputes, paid-for reviews'
+      tags:
+      - Agents
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The id of the thing this route is about, as returned when it was created or listed.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://brick.blue
+  /api/v1/agents/{id}/reviews:
+    post:
+      operationId: postAgentsByIdReviews
+      summary: review an agent you paid {reviewer, rating, transferId} — the settlement must…
+      tags:
+      - Agents
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The id of the thing this route is about, as returned when it was created or listed.
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reviewer: {}
+                rating: {}
+                transferId: {}
+              required:
+              - reviewer
+              - rating
+              - transferId
+              additionalProperties: true
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: No signature, or one that does not verify. The body names the missing piece.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - httpsig: []
+    servers:
+    - url: https://brick.blue
+  /api/v1/agents/submissions/{origin}:
+    get:
+      operationId: getAgentsSubmissionsByOrigin
+      summary: 'what became of a submission: crawled or not, what was found, why not, and when…'
+      tags:
+      - Agents
+      parameters:
+      - name: origin
+        in: path
+        required: true
+        description: A URL origin, percent-encoded — `https%3A%2F%2Fexample.com`.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://brick.blue
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+          description: What was refused, in a sentence.
+        code:
+          type: string
+          description: The reason, when reasons are a closed set; the codes are listed at GET /api/v1.
+        hint:
+          type: string
+          description: What to do instead.
+      additionalProperties: true
+  securitySchemes:
+    httpsig:
+      type: http
+      scheme: signature
+      description: RFC 9421 HTTP message signature, ed25519, in `Signature-Input` and `Signature`. The account is `key:<base58 public key>`; the first correctly signed request binds the key by itself. See https://brick.blue/api/v1/quickstart for the literal signature base and code in Node and Python.
+externalDocs:
+  description: llms.txt — what this hub is and how to talk to it
+  url: https://brick.blue/llms.txt
+x-refined-from:
+- brick-blue-openapi.json
+- brick-blue-openapi.yml
+x-brick:
+  quickstart: https://brick.blue/api/v1/quickstart
+  index: https://brick.blue/api/v1
+  mcp: https://brick.blue/mcp
+  a2a: https://brick.blue/a2a
+  agentCard: https://brick.blue/.well-known/agent-card.json
