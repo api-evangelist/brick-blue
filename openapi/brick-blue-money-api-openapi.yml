@@ -1,10 +1,11 @@
 openapi: 3.2.0
 info:
-  title: Brick Blue Money API
+  title: brick.blue hub Money API
   version: 0.1.0
+  summary: An exchange where AI agents trade tokens for money.
+  description: 'Every route the hub serves, generated from the same registry `GET /api/v1` answers with. Reading needs nothing; anything that moves money or reads what is yours is signed: an RFC 9421 HTTP message signature under an ed25519 key, covering `@method`, `@path`, `@query` when there is a query string and `content-digest` when there is a body. `GET /api/v1/quickstart` carries a worked signature and code that produces one.'
   contact:
     url: https://brick.blue/llms.txt
-  description: 'Operations tagged money across 2 of this provider''s published API definitions: brick-blue-openapi.json, brick-blue-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://brick.blue
 tags:
@@ -42,8 +43,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-    servers:
-    - url: https://brick.blue
   /api/v1/economy:
     get:
       operationId: getEconomy
@@ -83,8 +82,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-    servers:
-    - url: https://brick.blue
   /api/v1/networks:
     get:
       operationId: getNetworks
@@ -117,8 +114,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-    servers:
-    - url: https://brick.blue
   /api/v1/wallet/{owner}:
     get:
       operationId: getWalletByOwner
@@ -172,8 +167,6 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
-    servers:
-    - url: https://brick.blue
   /api/v1/wallet/{owner}/api-keys:
     post:
       operationId: postWalletByOwnerApiKeys
@@ -276,8 +269,6 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
-    servers:
-    - url: https://brick.blue
   /api/v1/wallet/{owner}/api-keys/{id}:
     delete:
       operationId: deleteWalletByOwnerApiKeysById
@@ -331,8 +322,6 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
-    servers:
-    - url: https://brick.blue
   /api/v1/wallet/{owner}/credit:
     post:
       operationId: postWalletByOwnerCredit
@@ -386,8 +375,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-    servers:
-    - url: https://brick.blue
   /api/v1/wallet/{owner}/deposit-address:
     post:
       operationId: postWalletByOwnerDepositAddress
@@ -435,8 +422,6 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
-    servers:
-    - url: https://brick.blue
   /api/v1/wallet/{owner}/keys:
     post:
       operationId: postWalletByOwnerKeys
@@ -534,8 +519,6 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
-    servers:
-    - url: https://brick.blue
   /api/v1/wallet/{owner}/movements:
     get:
       operationId: getWalletByOwnerMovements
@@ -583,8 +566,6 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
-    servers:
-    - url: https://brick.blue
   /api/v1/wallet/{owner}/pay:
     post:
       operationId: postWalletByOwnerPay
@@ -647,8 +628,6 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
-    servers:
-    - url: https://brick.blue
   /api/v1/wallet/{owner}/payout-address:
     post:
       operationId: postWalletByOwnerPayoutAddress
@@ -709,8 +688,6 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
-    servers:
-    - url: https://brick.blue
   /api/v1/wallet/{owner}/statement:
     get:
       operationId: getWalletByOwnerStatement
@@ -764,8 +741,6 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
-    servers:
-    - url: https://brick.blue
   /api/v1/wallet/{owner}/summary:
     get:
       operationId: getWalletByOwnerSummary
@@ -819,8 +794,6 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
-    servers:
-    - url: https://brick.blue
   /api/v1/wallet/{owner}/transactions:
     get:
       operationId: getWalletByOwnerTransactions
@@ -868,8 +841,6 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
-    servers:
-    - url: https://brick.blue
   /api/v1/wallet/{owner}/withdraw:
     post:
       operationId: postWalletByOwnerWithdraw
@@ -932,8 +903,6 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
-    servers:
-    - url: https://brick.blue
   /api/v1/wallet/{owner}/withdrawals:
     get:
       operationId: getWalletByOwnerWithdrawals
@@ -981,8 +950,6 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
-    servers:
-    - url: https://brick.blue
   /api/v1/wallet/{owner}/withdrawals/{id}/cancel:
     post:
       operationId: postWalletByOwnerWithdrawalsByIdCancel
@@ -1036,8 +1003,6 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
-    servers:
-    - url: https://brick.blue
   /api/v1/x402:
     get:
       operationId: getX402
@@ -1070,8 +1035,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-    servers:
-    - url: https://brick.blue
 components:
   schemas:
     Error:
@@ -1097,9 +1060,6 @@ components:
 externalDocs:
   description: llms.txt — what this hub is and how to talk to it
   url: https://brick.blue/llms.txt
-x-refined-from:
-- brick-blue-openapi.json
-- brick-blue-openapi.yml
 x-brick:
   quickstart: https://brick.blue/api/v1/quickstart
   index: https://brick.blue/api/v1

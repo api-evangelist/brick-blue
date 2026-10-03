@@ -1,8 +1,7 @@
 {
   "provider": "brick-blue",
   "sources": [
-    "_original/brick-blue-openapi.json",
-    "brick-blue-openapi.yml"
+    "_original/brick-blue-openapi.json"
   ],
   "outputs": [
     "brick-blue-account-api-openapi.yml",
@@ -23,33 +22,33 @@
     "brick-blue-validators-api-openapi.yml",
     "brick-blue-verify-api-openapi.yml"
   ],
-  "archived": [
-    "archived openapi/brick-blue-openapi.yml"
-  ],
+  "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
+    "1 archived document(s) dropped as subsets of other archived documents",
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
     "brick-blue-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
-    "brick-blue-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
-    "tag 'account' spans 2 source specs (brick-blue-openapi.json, brick-blue-openapi.yml): per-path servers applied",
-    "tag 'agents' spans 2 source specs (brick-blue-openapi.json, brick-blue-openapi.yml): per-path servers applied",
-    "tag 'games' spans 2 source specs (brick-blue-openapi.json, brick-blue-openapi.yml): per-path servers applied",
-    "tag 'memory' spans 2 source specs (brick-blue-openapi.json, brick-blue-openapi.yml): per-path servers applied",
-    "tag 'models' spans 2 source specs (brick-blue-openapi.json, brick-blue-openapi.yml): per-path servers applied",
-    "tag 'money' spans 2 source specs (brick-blue-openapi.json, brick-blue-openapi.yml): per-path servers applied",
-    "tag 'orientation' spans 2 source specs (brick-blue-openapi.json, brick-blue-openapi.yml): per-path servers applied",
-    "tag 'passport' spans 2 source specs (brick-blue-openapi.json, brick-blue-openapi.yml): per-path servers applied",
-    "tag 'prison' spans 2 source specs (brick-blue-openapi.json, brick-blue-openapi.yml): per-path servers applied",
-    "tag 'registry' spans 2 source specs (brick-blue-openapi.json, brick-blue-openapi.yml): per-path servers applied",
-    "tag 'reports' spans 2 source specs (brick-blue-openapi.json, brick-blue-openapi.yml): per-path servers applied",
-    "tag 'reputation' spans 2 source specs (brick-blue-openapi.json, brick-blue-openapi.yml): per-path servers applied",
-    "tag 'router' spans 2 source specs (brick-blue-openapi.json, brick-blue-openapi.yml): per-path servers applied",
-    "tag 'tasks' spans 2 source specs (brick-blue-openapi.json, brick-blue-openapi.yml): per-path servers applied",
-    "tag 'time' spans 2 source specs (brick-blue-openapi.json, brick-blue-openapi.yml): per-path servers applied",
-    "tag 'validators' spans 2 source specs (brick-blue-openapi.json, brick-blue-openapi.yml): per-path servers applied",
-    "tag 'verify' spans 2 source specs (brick-blue-openapi.json, brick-blue-openapi.yml): per-path servers applied",
-    "apis.yml register: written (+17 apis, 19 total)"
+    "apis.yml register: already-registered"
   ],
-  "skipped": []
+  "skipped": [
+    "_original/brick-blue-openapi.yml: archived document superseded by a larger archived document",
+    "brick-blue-account-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "brick-blue-agents-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "brick-blue-games-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "brick-blue-memory-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "brick-blue-models-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "brick-blue-money-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "brick-blue-orientation-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "brick-blue-passport-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "brick-blue-prison-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "brick-blue-registry-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "brick-blue-reports-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "brick-blue-reputation-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "brick-blue-router-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "brick-blue-tasks-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "brick-blue-time-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "brick-blue-validators-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "brick-blue-verify-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
