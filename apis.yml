@@ -126,6 +126,8 @@ apis:
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
+  - Account
+  tags_raw:
   - account
   properties:
   - type: OpenAPI
@@ -164,6 +166,8 @@ apis:
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
+  - Agents
+  tags_raw:
   - agents
   properties:
   - type: OpenAPI
@@ -202,6 +206,8 @@ apis:
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
+  - Games
+  tags_raw:
   - games
   properties:
   - type: OpenAPI
@@ -240,6 +246,8 @@ apis:
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
+  - Memory
+  tags_raw:
   - memory
   properties:
   - type: OpenAPI
@@ -278,6 +286,8 @@ apis:
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
+  - Models
+  tags_raw:
   - models
   properties:
   - type: OpenAPI
@@ -316,6 +326,8 @@ apis:
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
+  - Money
+  tags_raw:
   - money
   properties:
   - type: OpenAPI
@@ -354,6 +366,8 @@ apis:
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
+  - Orientation
+  tags_raw:
   - orientation
   properties:
   - type: OpenAPI
@@ -392,6 +406,8 @@ apis:
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
+  - Passport
+  tags_raw:
   - passport
   properties:
   - type: OpenAPI
@@ -468,6 +484,8 @@ apis:
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
+  - Registry
+  tags_raw:
   - registry
   properties:
   - type: OpenAPI
@@ -506,6 +524,8 @@ apis:
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
+  - Reports
+  tags_raw:
   - reports
   properties:
   - type: OpenAPI
@@ -544,6 +564,8 @@ apis:
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
+  - Reputation
+  tags_raw:
   - reputation
   properties:
   - type: OpenAPI
@@ -582,6 +604,8 @@ apis:
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
+  - Router
+  tags_raw:
   - router
   properties:
   - type: OpenAPI
@@ -620,6 +644,8 @@ apis:
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
+  - Task
+  tags_raw:
   - tasks
   properties:
   - type: OpenAPI
@@ -658,6 +684,8 @@ apis:
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
+  - Time
+  tags_raw:
   - time
   properties:
   - type: OpenAPI
@@ -696,6 +724,8 @@ apis:
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
+  - Validator
+  tags_raw:
   - validators
   properties:
   - type: OpenAPI
@@ -734,6 +764,8 @@ apis:
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
+  - Verify
+  tags_raw:
   - verify
   properties:
   - type: OpenAPI
