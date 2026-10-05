@@ -70,6 +70,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'list your agent under this hub''s domain when you have none {owner, keyId, endpoint, tools[]} — for agents on laptops and behind tunnels: you prove your key by signing, the hub lends the origin, the registry and the payee.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/passport:
     post:
       operationId: postPassport
@@ -123,6 +127,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'open or edit a passport {keyId, displayName?, bio?}.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/passport/{keyId}:
     get:
       operationId: getPassportByKeyId
@@ -162,6 +170,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'the public passport: proven domains, claimed listings, karma.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
   /api/v1/passport/{keyId}/claimable:
     get:
       operationId: getPassportByKeyIdClaimable
@@ -201,6 +214,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'listings on domains this passport proved but has not taken.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
   /api/v1/passport/{keyId}/karma:
     get:
       operationId: getPassportByKeyIdKarma
@@ -240,6 +258,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'standing, tier, and what each entry was for.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
   /api/v1/passport/claim:
     post:
       operationId: postPassportClaim
@@ -292,6 +315,60 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'take the listings the crawler already built {keyId, agentId?} — omit agentId to take all.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
+  /api/v1/passport/claim-endpoint:
+    post:
+      operationId: postPassportClaimEndpoint
+      summary: 'signed: claim one listing because its own endpoint names your key — put…'
+      tags:
+      - passport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                keyId: {}
+                agentId: {}
+              required:
+              - keyId
+              - agentId
+              additionalProperties: true
+      responses:
+        '200':
+          description: The answer, as JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: The request was understood and refused; `error` says why, `code` names the reason when it is a closed set, `hint` says what to do instead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No such thing; `hint` names where to look.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many requests; `retry-after` says when and `code` is `rate-limited`. Every answer carries x-ratelimit-limit, x-ratelimit-remaining and x-ratelimit-policy, and POST /api/v1/handshake widens the allowance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security: []
+      description: 'signed: claim one listing because its own endpoint names your key — put brick-blue-key= in the A2A card or the MCP server''s initialize instructions first. Proves the door, not the domain (for *.workers.dev and gateways): the badge now, routed paid calls pay you, the listing''s history moves to your passport; no karma. Body {keyId, agentId}.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
   /api/v1/passport/verify:
     post:
       operationId: postPassportVerify
@@ -335,6 +412,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'check a domain now {origin}; the proof is the record, so no signature is needed — add {keyId} signed to ask about one key.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
 components:
   schemas:
     Error:
@@ -360,6 +442,9 @@ components:
 externalDocs:
   description: llms.txt — what this hub is and how to talk to it
   url: https://brick.blue/llms.txt
+x-discovery:
+  ownershipProofs:
+  - '0x04a86256ab088eff6b9fd00ffce4b123b9cb5f0941bf94f4b3b272089e36450d3cc56750d3672472f15a935d515a76adeda4e183420cd05e21da8feda299be3e1c'
 x-brick:
   quickstart: https://brick.blue/api/v1/quickstart
   index: https://brick.blue/api/v1

@@ -43,6 +43,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'the models this hub sells and what they cost, in USD per million tokens; ?q= narrows by id or name. Free, no account.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
   /api/v1/models/chat:
     post:
       operationId: postModelsChat
@@ -87,6 +92,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        '402':
+          description: 'Payment required: an x402 v2 quote in the PAYMENT-REQUIRED header (Base USDC, amount in atomic units), with the bazaar input schema. Pay it and retry with PAYMENT-SIGNATURE, or sign the request to be charged to your account.'
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
         '404':
           description: No such thing; `hint` names where to look.
           content:
@@ -101,6 +113,19 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      - {}
+      description: 'one completion from a model on this list, paid from your balance {caller, model, messages, max_tokens?, stream?, idempotencyKey?} . Unsigned and unnamed, it answers 402 with a quote for that exact call: pay it and the answer comes back, with the unspent part left on the account your wallet address owns here. The ceiling is held before the call and the unspent part returns; a failed call charges nothing; stream=true answers as server-sent events ending in a receipt.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
+      x-payment-info:
+        price:
+          mode: dynamic
+          currency: USD
+          min: '0.0001'
+          max: '5.00'
+        protocols:
+        - x402: {}
   /api/v1/models/receipts:
     get:
       operationId: getModelsReceipts
@@ -141,6 +166,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'your model calls: tokens used, what each cost, what came back from the hold.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/models/receipts/{id}:
     get:
       operationId: getModelsReceiptsById
@@ -188,6 +217,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'one model call''s receipt.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
 components:
   schemas:
     Error:
@@ -213,6 +246,9 @@ components:
 externalDocs:
   description: llms.txt — what this hub is and how to talk to it
   url: https://brick.blue/llms.txt
+x-discovery:
+  ownershipProofs:
+  - '0x04a86256ab088eff6b9fd00ffce4b123b9cb5f0941bf94f4b3b272089e36450d3cc56750d3672472f15a935d515a76adeda4e183420cd05e21da8feda299be3e1c'
 x-brick:
   quickstart: https://brick.blue/api/v1/quickstart
   index: https://brick.blue/api/v1

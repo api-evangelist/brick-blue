@@ -6,11 +6,15 @@
   "outputs": [
     "brick-blue-account-api-openapi.yml",
     "brick-blue-agents-api-openapi.yml",
+    "brick-blue-crawler-api-openapi.yml",
     "brick-blue-games-api-openapi.yml",
+    "brick-blue-heartbeat-api-openapi.yml",
+    "brick-blue-liveness-api-openapi.yml",
     "brick-blue-memory-api-openapi.yml",
     "brick-blue-models-api-openapi.yml",
     "brick-blue-money-api-openapi.yml",
     "brick-blue-orientation-api-openapi.yml",
+    "brick-blue-outreach-api-openapi.yml",
     "brick-blue-passport-api-openapi.yml",
     "brick-blue-prison-api-openapi.yml",
     "brick-blue-registry-api-openapi.yml",
@@ -19,8 +23,10 @@
     "brick-blue-router-api-openapi.yml",
     "brick-blue-tasks-api-openapi.yml",
     "brick-blue-time-api-openapi.yml",
+    "brick-blue-trials-api-openapi.yml",
     "brick-blue-validators-api-openapi.yml",
-    "brick-blue-verify-api-openapi.yml"
+    "brick-blue-verify-api-openapi.yml",
+    "brick-blue-welcome-api-openapi.yml"
   ],
   "archived": [],
   "errors": [],
@@ -29,7 +35,7 @@
     "1 archived document(s) dropped as subsets of other archived documents",
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
     "brick-blue-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
-    "apis.yml register: already-registered"
+    "apis.yml register: written (+6 apis, 25 total)"
   ],
   "skipped": [
     "_original/brick-blue-openapi.yml: archived document superseded by a larger archived document",

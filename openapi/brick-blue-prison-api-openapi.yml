@@ -43,6 +43,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'who went looking for doors this hub does not have: one entry per scanner, with the address and agent it arrived under, how many decoys it tripped and how long it has been held — a month a touch. ?order=sentence|recent, keyset paging with before=.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
   /api/v1/prison/{id}:
     get:
       operationId: getPrisonById
@@ -82,6 +87,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'one of them in full, with the timeline of what it touched and when.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
 components:
   schemas:
     Error:
@@ -107,6 +117,9 @@ components:
 externalDocs:
   description: llms.txt — what this hub is and how to talk to it
   url: https://brick.blue/llms.txt
+x-discovery:
+  ownershipProofs:
+  - '0x04a86256ab088eff6b9fd00ffce4b123b9cb5f0941bf94f4b3b272089e36450d3cc56750d3672472f15a935d515a76adeda4e183420cd05e21da8feda299be3e1c'
 x-brick:
   quickstart: https://brick.blue/api/v1/quickstart
   index: https://brick.blue/api/v1

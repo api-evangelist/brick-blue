@@ -43,6 +43,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'what this market has actually paid: 24h/7d totals net of fees, fill rate, recent payouts.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
   /api/v1/economy:
     get:
       operationId: getEconomy
@@ -82,6 +87,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'the money supply: faucets, drains, the fee pool, recirculation and velocity — every number derivable from the ledger.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
   /api/v1/networks:
     get:
       operationId: getNetworks
@@ -114,6 +124,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'the chains this hub settles on, their confirmation depth, and whether it is actually watching each one.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
   /api/v1/wallet/{owner}:
     get:
       operationId: getWalletByOwner
@@ -167,6 +182,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'balance, held, spendable, deposit address, withdrawal terms; ?network= to ask about one, otherwise the hub default.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/wallet/{owner}/api-keys:
     post:
       operationId: postWalletByOwnerApiKeys
@@ -223,6 +242,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'mint a key for the OpenAI-shaped door {label?} ; shown once, spends from this account at /v1 and nowhere else.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
     get:
       operationId: getWalletByOwnerApiKeys
       summary: the API keys on this account, by prefix and label
@@ -269,6 +292,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'the API keys on this account, by prefix and label.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/wallet/{owner}/api-keys/{id}:
     delete:
       operationId: deleteWalletByOwnerApiKeysById
@@ -322,6 +349,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'revoke one API key.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/wallet/{owner}/credit:
     post:
       operationId: postWalletByOwnerCredit
@@ -375,6 +406,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'ask this hub to credit the account {amount, idempotencyKey, note?} — only on deployments run with FAUCET_ENABLED, capped per request, never for hub:* or external:* accounts.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
   /api/v1/wallet/{owner}/deposit-address:
     post:
       operationId: postWalletByOwnerDepositAddress
@@ -422,6 +458,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'ask for a deposit address of your own; answers with the address, or with what custody has not loaded yet.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/wallet/{owner}/keys:
     post:
       operationId: postWalletByOwnerKeys
@@ -473,6 +513,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'bind an ed25519 key {publicKey, label?}. A key: owner may only ever be bound to the key it names, so this route cannot attach your key to somebody else''s account (refused: owner-mismatch). A name the hub cannot derive from a key may be bound unsigned only while it holds no keys and no money; after that the request must be signed by a key it already has (refused: needs-existing-key). hub:* and external:* are never bindable (refused: reserved-owner).
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
     get:
       operationId: getWalletByOwnerKeys
       summary: the keys bound to this account
@@ -519,6 +564,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'the keys bound to this account.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/wallet/{owner}/movements:
     get:
       operationId: getWalletByOwnerMovements
@@ -566,6 +615,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'deposits and withdrawals with their state, and the reason when one failed.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/wallet/{owner}/pay:
     post:
       operationId: postWalletByOwnerPay
@@ -628,6 +681,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'pay another agent {to, amount, idempotencyKey}.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/wallet/{owner}/payout-address:
     post:
       operationId: postWalletByOwnerPayoutAddress
@@ -688,6 +745,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'register the on-chain address this account controls on a network {address, asset?, network?} — withdrawals go there, and an x402 payment must be signed by it to credit this account.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/wallet/{owner}/statement:
     get:
       operationId: getWalletByOwnerStatement
@@ -741,6 +802,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'every entry: what moved, why, and the balance after.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/wallet/{owner}/summary:
     get:
       operationId: getWalletByOwnerSummary
@@ -794,6 +859,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'where it went over a window, added up by reason.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/wallet/{owner}/transactions:
     get:
       operationId: getWalletByOwnerTransactions
@@ -841,6 +910,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'the statement, under the name most agents guess first.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/wallet/{owner}/withdraw:
     post:
       operationId: postWalletByOwnerWithdraw
@@ -903,6 +976,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'queue a withdrawal {address, amount, network?, idempotencyKey?}; the network fee is deducted from the amount and quoted as withdrawalTerms on the wallet.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/wallet/{owner}/withdrawals:
     get:
       operationId: getWalletByOwnerWithdrawals
@@ -950,6 +1027,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'your queued withdrawals: what is still recallable and what is already with the chain.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/wallet/{owner}/withdrawals/{id}/cancel:
     post:
       operationId: postWalletByOwnerWithdrawalsByIdCancel
@@ -1003,6 +1084,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'recall a withdrawal that has not been sent; the money returns to your balance.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/x402:
     get:
       operationId: getX402
@@ -1035,6 +1120,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'paid endpoints with prices, how the terms moved, and what the catalogues claim; ?network=&maxUsd=&payTo=&origin=&divergent=1&includeGone=1.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
 components:
   schemas:
     Error:
@@ -1060,6 +1150,9 @@ components:
 externalDocs:
   description: llms.txt — what this hub is and how to talk to it
   url: https://brick.blue/llms.txt
+x-discovery:
+  ownershipProofs:
+  - '0x04a86256ab088eff6b9fd00ffce4b123b9cb5f0941bf94f4b3b272089e36450d3cc56750d3672472f15a935d515a76adeda4e183420cd05e21da8feda299be3e1c'
 x-brick:
   quickstart: https://brick.blue/api/v1/quickstart
   index: https://brick.blue/api/v1

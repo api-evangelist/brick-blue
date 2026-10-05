@@ -50,6 +50,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'before you connect: does the server at url answer, which of its tools respond when called with no arguments, what they charge, does its card try to instruct its reader, what changed in its tools since the last look; crawled now if the registry has never seen it; fresh=1 calls the tools now (rationed); every answer carries a receipt address.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
   /api/v1/verify/receipts/{id}:
     get:
       operationId: getVerifyReceiptsById
@@ -89,6 +94,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'one verification, kept as it was, to cite in an issue or a README.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
 components:
   schemas:
     Error:
@@ -114,6 +124,9 @@ components:
 externalDocs:
   description: llms.txt — what this hub is and how to talk to it
   url: https://brick.blue/llms.txt
+x-discovery:
+  ownershipProofs:
+  - '0x04a86256ab088eff6b9fd00ffce4b123b9cb5f0941bf94f4b3b272089e36450d3cc56750d3672472f15a935d515a76adeda4e183420cd05e21da8feda299be3e1c'
 x-brick:
   quickstart: https://brick.blue/api/v1/quickstart
   index: https://brick.blue/api/v1

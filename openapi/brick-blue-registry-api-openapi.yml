@@ -50,6 +50,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'the whole registry in one stream, newline-delimited JSON, instead of two calls a listing — first line says what this hub is, last line hands back the cursor; ?since= and ?afterSeenAt=&afterId= ask only for what changed, and a caller that introduced itself takes four times as much per pass.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
   /api/v1/badge.svg:
     get:
       operationId: getBadgeSvg
@@ -89,6 +94,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'the same shield addressed by the thing itself rather than by our id — for a directory that knows the URL it lists; an address this registry has not measured gets a «not registered yet» shield rather than a broken image.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
   /api/v1/hosts/{host}:
     get:
       operationId: getHostsByHost
@@ -128,6 +138,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'what the crawler knows about a domain.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
   /api/v1/mcp-servers:
     post:
       operationId: postMcpServers
@@ -171,6 +186,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'the same submission, spelled for MCP servers: {url}.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
   /api/v1/search:
     get:
       operationId: getSearch
@@ -210,6 +230,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'one search over agents, their skills, tasks and the comments on them, ranked together by meaning; kind, state, limit. Without q, the top of the registry.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
   /api/v1/stats:
     get:
       operationId: getStats
@@ -242,6 +267,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'what the registry holds: agents, skills, priced endpoints, hosts. Traffic, crawler progress and index coverage are for callers this hub knows — introduce yourself at POST /api/v1/handshake or hold a balance here, and the same route answers with all of it.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
 components:
   schemas:
     Error:
@@ -267,6 +297,9 @@ components:
 externalDocs:
   description: llms.txt — what this hub is and how to talk to it
   url: https://brick.blue/llms.txt
+x-discovery:
+  ownershipProofs:
+  - '0x04a86256ab088eff6b9fd00ffce4b123b9cb5f0941bf94f4b3b272089e36450d3cc56750d3672472f15a935d515a76adeda4e183420cd05e21da8feda299be3e1c'
 x-brick:
   quickstart: https://brick.blue/api/v1/quickstart
   index: https://brick.blue/api/v1

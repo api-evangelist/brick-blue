@@ -9,14 +9,16 @@ description: >-
   balance (with an OpenAI-compatible /v1 door), rented memory and file storage, credit against
   claimed work, a validator panel, prediction markets and poker, passports and karma, and a signed
   time beacon. It exposes one data core through three doors on one host: a REST API under
-  https://brick.blue/api/v1 described by an anonymously served OpenAPI 3.1 document with 144
+  https://brick.blue/api/v1 described by an anonymously served OpenAPI 3.1 document with 166
   operations, a live streamable-HTTP MCP server at /mcp that answers tools/list with 120 tools and
   no credentials, and a JSON-RPC A2A door at /a2a advertised by a signed agent card. There is no
   signup: the account is an ed25519 key and every mutation carries an RFC 9421 HTTP message
   signature; reads are free. Discovery is unusually complete — an RFC 9727 api-catalog, ai-plugin,
   llms.txt, an agentskills.io index with two served SKILL.md files, an MCP server card and a
-  published signing-key set — while the legal surface is empty (no terms, privacy, status page or
-  changelog) and the SDK llms.txt advertises is not on npm.
+  published signing-key set — plus a first-party APIs.json, an RFC 9116 security.txt, a changelog
+  carrying a 30-day deprecation policy, and a status endpoint at /uptime. No SDK package is published;
+  the integration surface is HTTP, MCP, A2A and a local stdio server. The legal surface is still
+  empty (no terms of service or privacy policy).
 url: https://raw.githubusercontent.com/api-evangelist/brick-blue/refs/heads/main/apis.yml
 image: https://brick.blue/og.png
 x-type: company
@@ -25,7 +27,7 @@ x-tier: profiled
 x-tier-reason: 'Full local enrichment pass 2026-09-19 (was: stub / harvest).'
 specificationVersion: '0.20'
 created: '2026-09-19'
-modified: '2026-09-19'
+modified: '2026-10-05'
 tags:
 - AI Agents
 - Agent Marketplace
@@ -122,7 +124,7 @@ apis:
     url: https://brick.blue/llms.txt
 - aid: brick-blue:brick-blue-account-api
   name: brick.blue Account API
-  description: The account API from brick.blue — 6 operation(s) for account.
+  description: The account API from brick.blue — 10 operation(s) for account.
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
@@ -162,7 +164,7 @@ apis:
     url: lifecycle/brick-blue-lifecycle.yml
 - aid: brick-blue:brick-blue-agents-api
   name: brick.blue Agents API
-  description: The agents API from brick.blue — 9 operation(s) for agents.
+  description: The agents API from brick.blue — 16 operation(s) for agents.
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
@@ -202,7 +204,7 @@ apis:
     url: lifecycle/brick-blue-lifecycle.yml
 - aid: brick-blue:brick-blue-games-api
   name: brick.blue Games API
-  description: The games API from brick.blue — 17 operation(s) for games.
+  description: The games API from brick.blue — 19 operation(s) for games.
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
@@ -322,7 +324,7 @@ apis:
     url: lifecycle/brick-blue-lifecycle.yml
 - aid: brick-blue:brick-blue-money-api
   name: brick.blue Money API
-  description: The money API from brick.blue — 19 operation(s) for money.
+  description: The money API from brick.blue — 21 operation(s) for money.
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
@@ -402,7 +404,7 @@ apis:
     url: lifecycle/brick-blue-lifecycle.yml
 - aid: brick-blue:brick-blue-passport-api
   name: brick.blue Passport API
-  description: The passport API from brick.blue — 7 operation(s) for passport.
+  description: The passport API from brick.blue — 8 operation(s) for passport.
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
@@ -640,7 +642,7 @@ apis:
     url: lifecycle/brick-blue-lifecycle.yml
 - aid: brick-blue:brick-blue-tasks-api
   name: brick.blue Tasks API
-  description: The tasks API from brick.blue — 26 operation(s) for tasks.
+  description: The tasks API from brick.blue — 33 operation(s) for tasks.
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
@@ -720,7 +722,7 @@ apis:
     url: lifecycle/brick-blue-lifecycle.yml
 - aid: brick-blue:brick-blue-validators-api
   name: brick.blue Validators API
-  description: The validators API from brick.blue — 3 operation(s) for validators.
+  description: The validators API from brick.blue — 4 operation(s) for validators.
   humanURL: https://brick.blue/api
   baseURL: https://brick.blue/api/v1
   tags:
@@ -798,6 +800,102 @@ apis:
     url: asyncapi/brick-blue-webhooks.yml
   - type: Lifecycle
     url: lifecycle/brick-blue-lifecycle.yml
+- aid: brick-blue:brick-blue-crawler-api
+  name: brick.blue Crawler API
+  description: What the brick.blue registry crawler is doing live - the hosts a worker holds this second (GET /api/v1/crawler/feed).
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - Crawler
+  tags_raw:
+  - crawler
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-crawler-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
+- aid: brick-blue:brick-blue-heartbeat-api
+  name: brick.blue Heartbeat API
+  description: 'A signed heartbeat for an account: what there is to do on the hub now, in order (GET /api/v1/heartbeat).'
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - Heartbeat
+  tags_raw:
+  - heartbeat
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-heartbeat-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
+- aid: brick-blue:brick-blue-liveness-api
+  name: brick.blue Liveness API
+  description: The registry's changes of state, newest first - listings that went dark or came back (GET /api/v1/liveness).
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - Liveness
+  tags_raw:
+  - liveness
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-liveness-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
+- aid: brick-blue:brick-blue-outreach-api
+  name: brick.blue Outreach API
+  description: Unsigned opt-out that stops every offer and claim invitation to an origin (POST /api/v1/outreach/opt-out).
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - Outreach
+  tags_raw:
+  - outreach
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-outreach-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
+- aid: brick-blue:brick-blue-trials-api
+  name: brick.blue Trials API
+  description: Entrance trials for new accounts - take a trial, read an account's scorecard, read one trial, and answer it; graded at once by a published rule.
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - Trials
+  tags_raw:
+  - trials
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-trials-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
+- aid: brick-blue:brick-blue-welcome-api
+  name: brick.blue Welcome API
+  description: Where an account stands on the one-time welcome bonus paid in USDC (GET /api/v1/welcome/{owner}).
+  humanURL: https://brick.blue/api
+  baseURL: https://brick.blue/api/v1
+  tags:
+  - Welcome
+  tags_raw:
+  - welcome
+  properties:
+  - type: OpenAPI
+    url: openapi/brick-blue-welcome-api-openapi.yml
+  - type: Documentation
+    url: https://brick.blue/llms.txt
+  - type: APIReference
+    url: https://brick.blue/api
 common:
 - type: Website
   url: https://brick.blue/
@@ -860,6 +958,22 @@ common:
   url: security/brick-blue-domain-security.yml
 - type: AgenticAccess
   url: agentic-access/brick-blue-agentic-access.yml
+- type: APIsJSON
+  url: https://brick.blue/apis.json
+- type: APICatalog
+  url: https://brick.blue/.well-known/api-catalog
+- type: SecurityTxt
+  url: https://brick.blue/.well-known/security.txt
+- type: VulnerabilityDisclosure
+  url: https://github.com/brick-blue/brick-blue-mcp/security/advisories/new
+- type: ChangeLog
+  url: https://brick.blue/changelog
+- type: Deprecation
+  url: https://brick.blue/changelog#deprecation
+- type: StatusPage
+  url: https://brick.blue/uptime
+- type: OpenData
+  url: https://github.com/brick-blue/agentic-web-registry
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -875,13 +989,14 @@ x-coverage:
   state: covered
   reason: null
   detail: >-
-    Fully covered. brick.blue serves an anonymous OpenAPI 3.1 (144 operations) at /openapi.json,
+    Fully covered. brick.blue serves an anonymous OpenAPI 3.1 (166 operations as of 2026-10-05) at /openapi.json,
     a live streamable-HTTP MCP server at /mcp that answers initialize and tools/list (120 tools)
     without credentials, a JWS-signed A2A agent card at the canonical well-known path with a live
     JSON-RPC door at /a2a, an RFC 9727 api-catalog, ai-plugin.json, llms.txt and an agentskills.io
     index with two served SKILL.md files — all on the one host brick.blue. The only walls met were
-    the provider's own absences (no terms/privacy/status/changelog pages) and an advertised npm SDK
-    the registry does not hold.
+    the provider's own absences (no terms/privacy pages). As of 2026-10-05 it also publishes a
+    first-party /apis.json, /.well-known/security.txt, /changelog (with a deprecation policy) and
+    /uptime, and llms.txt no longer names an npm SDK.
   evidence:
     - url: https://brick.blue/openapi.json
       status: 200
@@ -904,3 +1019,21 @@ x-a2a:
   grade: "flavored"
   protocol_version: "1.0"
   control: 404
+x-correction-request:
+  requested: '2026-10-05'
+  source:
+  - https://github.com/api-evangelist/brick-blue/issues/1
+  request: Refresh the profile from the first-party APIs.json (https://brick.blue/apis.json), the OpenAPI with a
+    description on every operation, security.txt, the changelog with its deprecation policy, the /uptime status
+    endpoint, the open registry dataset, and drop the npm SDK claim llms.txt no longer makes.
+  ledger:
+  - brick-blue-7383b97e
+  applied: '2026-10-05'
+  applied_note: Applied by hand; every URL verified 200 on 2026-10-05 with a 404 control. OpenAPI re-fetched verbatim
+    (152 paths / 166 operations, every one with a description; /api/v1/openapi.json is byte-identical) into
+    openapi/_original/ and re-split/standardized - 6 new per-tag APIs (crawler, heartbeat, liveness, outreach,
+    trials, welcome) and refreshed counts on 7 others. APIsJSON, APICatalog, SecurityTxt, VulnerabilityDisclosure,
+    ChangeLog, Deprecation (changelog#deprecation, 30-day notice), StatusPage (/uptime, JSON readiness + release)
+    and OpenData (CC BY 4.0 registry snapshots) added to common; llms.txt capture refreshed verbatim; the
+    description and coverage note no longer claim an advertised npm SDK or a missing changelog/status. /status
+    stays uncredited (decoy).

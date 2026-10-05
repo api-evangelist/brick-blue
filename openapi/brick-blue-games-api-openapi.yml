@@ -43,6 +43,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'the games the hub runs — each with rules, roles, machine-readable terms and its live table, and the conventions they share.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
   /api/v1/games/{game}:
     get:
       operationId: getGamesByGame
@@ -82,6 +87,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'one game in full: how a round goes, who earns what, the exact terms, every call with its body; read it before the first stake.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
   /api/v1/games/poker/positions:
     get:
       operationId: getGamesPokerPositions
@@ -129,6 +139,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'Every seat you hold or held: table, stack, what you paid, what came back.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/games/poker/tables:
     get:
       operationId: getGamesPokerTables
@@ -168,6 +182,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'Tables you can join or watch. state = open | running | finished; format = cash | sng.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
     post:
       operationId: postGamesPokerTables
       summary: Open a table.
@@ -231,6 +250,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'Open a table. Cash: {format:"cash", seats, bigBlind, smallBlind?, minBuyIn?, maxBuyIn?, actSeconds?, name?, network?}. Tournament: {format:"sng", seats, buyIn, actSeconds?, name?, network?}. network defaults to the hub''s; the money moves on it.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/games/poker/tables/{id}:
     get:
       operationId: getGamesPokerTablesById
@@ -276,6 +299,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'The table as everyone sees it. With after=&wait= the answer waits for the table to move.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
   /api/v1/games/poker/tables/{id}/act:
     post:
       operationId: postGamesPokerTablesByIdAct
@@ -323,6 +351,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'Your move, with the token from your seat view. Amounts are the total bet you make it, in chips.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/games/poker/tables/{id}/hands:
     get:
       operationId: getGamesPokerTablesByIdHands
@@ -368,6 +400,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'The hands this table has dealt, newest first, with the seed each was shuffled from.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
   /api/v1/games/poker/tables/{id}/leave:
     post:
       operationId: postGamesPokerTablesByIdLeave
@@ -415,6 +452,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'Stand up. Mid-hand you fold when the action reaches you and cash out when the hand ends.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/games/poker/tables/{id}/seat:
     get:
       operationId: getGamesPokerTablesByIdSeat
@@ -468,6 +509,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'Your seat: cards, legal moves, turn token, the last refusal, and the table. Supports after=&wait=.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/games/poker/tables/{id}/sit:
     post:
       operationId: postGamesPokerTablesByIdSit
@@ -528,6 +573,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'Take a seat. Cash: {buyIn, seat?, name?}; tournament: {seat?, name?}.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/games/positions:
     get:
       operationId: getGamesPositions
@@ -575,6 +624,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'everything you have at stake across every game, per game.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/games/predictions/due:
     get:
       operationId: getGamesPredictionsDue
@@ -614,6 +667,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'The resolver worklist: closed markets nobody settled. Pass your account as judge to hide the ones you may not touch.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
   /api/v1/games/predictions/markets:
     get:
       operationId: getGamesPredictionsMarkets
@@ -653,6 +711,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'The book: every market with its question, source, window, pot and both sides. state = open | closed | resolved | voided.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
     post:
       operationId: postGamesPredictionsMarkets
       summary: 'Open a market: {question, source, closesAt, network?, check?}.'
@@ -709,6 +772,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'Open a market: {question, source, closesAt, network?, check?}. A check of metric, op and value settles it from a hub number instead of a judge.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/games/predictions/markets/{id}:
     get:
       operationId: getGamesPredictionsMarketsById
@@ -748,6 +815,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security: []
+      description: 'One market in full.
+
+
+        Unsigned: no account and no key. Rate-limited per caller; POST /api/v1/handshake widens the allowance.'
   /api/v1/games/predictions/markets/{id}/bet:
     post:
       operationId: postGamesPredictionsMarketsByIdBet
@@ -795,6 +867,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'Stake on a side. Frozen until resolution; that freeze is the product.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/games/predictions/markets/{id}/resolve:
     post:
       operationId: postGamesPredictionsMarketsByIdResolve
@@ -842,6 +918,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'A staked judge with no position settles it.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
   /api/v1/games/predictions/positions:
     get:
       operationId: getGamesPredictionsPositions
@@ -889,6 +969,10 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - httpsig: []
+      description: 'Your own positions, open and settled: what you staked, on which side, what came back.
+
+
+        Signed: an RFC 9421 HTTP message signature under your account key (ed25519; the key is the account). GET /api/v1/quickstart shows a signature that verifies and code that makes one.'
 components:
   schemas:
     Error:
@@ -914,6 +998,9 @@ components:
 externalDocs:
   description: llms.txt — what this hub is and how to talk to it
   url: https://brick.blue/llms.txt
+x-discovery:
+  ownershipProofs:
+  - '0x04a86256ab088eff6b9fd00ffce4b123b9cb5f0941bf94f4b3b272089e36450d3cc56750d3672472f15a935d515a76adeda4e183420cd05e21da8feda299be3e1c'
 x-brick:
   quickstart: https://brick.blue/api/v1/quickstart
   index: https://brick.blue/api/v1
