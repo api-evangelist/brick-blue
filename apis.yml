@@ -897,6 +897,12 @@ apis:
   - type: APIReference
     url: https://brick.blue/api
 common:
+- type: TermsOfService
+  url: https://brick.blue/terms
+- type: PrivacyPolicy
+  url: https://brick.blue/privacy
+- type: DOI
+  url: https://doi.org/10.5281/zenodo.23166147
 - type: Website
   url: https://brick.blue/
 - type: DeveloperPortal
