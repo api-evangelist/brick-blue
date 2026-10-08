@@ -102,3 +102,16 @@ services_catalogue:
 human_pages:
   - {url: 'https://brick.blue/services', status: 200, note: 'the same catalogue rendered for a browser'}
   - {url: 'https://brick.blue/pricing', status: 404}
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - metered
+  units: []
+  plans:
+  - name: Pay per call (single public tier)
+    access: other
+    model: metered
+    model_how: derived
+    units: []
+    periods: []
