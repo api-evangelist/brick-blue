@@ -1,0 +1,34 @@
+# Front Door AI Index — brick-blue — 2026-09-17
+# AI vocabulary counted on the provider's root page. Generated; do not edit.
+# `score` is null unless ownership is `own` — see front_door_ai.py.
+front_door_ai:
+  slug: brick-blue
+  lexicon_version: '1.0'
+  probed_at: '2026-09-25'
+  host: brick.blue
+  final_host: brick.blue
+  ownership: own
+  owner: brick-blue
+  shares_host_with: null
+  inherited_from: null
+  alias_of: null
+  verdict: scored
+  score: 14
+  band: 5
+  band_label: prominent
+  host_score: 14
+  density: 9.14
+  words: 1532
+  tiers:
+    agentic: 10
+    core: 4
+    model: 0
+  ambiguous: 37
+  top_terms:
+    agent: 37
+    AI: 4
+    AI agent: 3
+    MCP: 3
+    inference: 2
+    llms.txt: 1
+    prompts: 1
