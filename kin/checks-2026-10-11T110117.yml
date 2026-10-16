@@ -2,16 +2,16 @@
 kin_checks:
   slug: brick-blue
   schema_version: 0.23.0
-  scored_at: '2026-10-03'
-  run_ts: 2026-10-03T024842
+  scored_at: '2026-10-11'
+  run_ts: 2026-10-11T110117
   note: Actionable checks (missed + partial) in `checks`, plus the ids that did not
     apply in `na`. Everything else in rubric/scoring-0.23.0.yml was earned; counts
     below let you verify that.
   counts:
     total: 153
     earned: 35
-    partial: 22
-    missed: 74
+    partial: 23
+    missed: 73
     na: 22
   checks:
   - id: newsroom_present
@@ -29,10 +29,6 @@ kin_checks:
     detail: 0 of 17 openapi documents pass; credited at 90% because of their provenance
       (unknown)
   - id: openapi_3_0
-    status: missed
-    detail: 0 of 17 openapi documents pass; credited at 90% because of their provenance
-      (unknown)
-  - id: operations_description_coverage
     status: missed
     detail: 0 of 17 openapi documents pass; credited at 90% because of their provenance
       (unknown)
@@ -194,6 +190,11 @@ kin_checks:
     status: partial
     earned: 4.5
   - id: operations_summary_coverage
+    status: partial
+    earned: 5.4
+    detail: 17 of 17 openapi documents pass; credited at 90% because of their provenance
+      (unknown)
+  - id: operations_description_coverage
     status: partial
     earned: 5.4
     detail: 17 of 17 openapi documents pass; credited at 90% because of their provenance
