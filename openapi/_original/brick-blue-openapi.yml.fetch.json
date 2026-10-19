@@ -1,0 +1,12 @@
+{
+ "url": "https://brick.blue/openapi.json",
+ "requested_url": "https://brick.blue/openapi.json",
+ "status": 200,
+ "content_type": "application/json; charset=utf-8",
+ "bytes": 288132,
+ "sha256": "5cee1082713801e19a3d1876a47db7c7553d7978f6b47e3e9043589a64a5b6d3",
+ "fetched_at": "2026-10-19",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "equivalent",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the provider's current document describes the same operations (Jaccard 0.954), but the bytes differ, so the archive is an earlier or reformatted copy."
+}
