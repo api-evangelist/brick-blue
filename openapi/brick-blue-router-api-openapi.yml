@@ -163,3 +163,9 @@ x-brick:
   mcp: https://brick.blue/mcp
   a2a: https://brick.blue/a2a
   agentCard: https://brick.blue/.well-known/agent-card.json
+x-provenance:
+  method: harvested
+  publisher: brick.blue
+  source: https://brick.blue/openapi.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
